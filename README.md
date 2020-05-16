@@ -1,11 +1,11 @@
 # indexr
 
-### An advanced image viewing app that allows user to custom tag their localally stored images. User can search by tags (or exclude by tag) to quickly find the image they were thinking of
+### An advanced image viewing app that allows user to custom tag their locally stored images. User can search by tags (or exclude by tag) to quickly find the image they were thinking of.
 
 ## Technologies Used
 
 ### 
-Postgresql datatbase  
+Postgresql database  
 Ruby/Rails  
 React (create-react-app)  
 React Router (for user authentication)  
