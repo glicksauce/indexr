@@ -12,7 +12,7 @@ React Router (for user authentication)
 Javascript (localstorage)  
 
 ## New technologies
-This project relies on parsing a user's local directory to find images (with a stretch goal to automatically parse sub-directories as well). This will involve learning some Web API's like [FileSystemDirectoryEntry]: (https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryEntry/createReader)
+This project relies on parsing a user's local directory to find images (with a stretch goal to automatically parse sub-directories as well). This will involve learning some Web API's like [FileSystemDirectoryEntry](https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryEntry/createReader)
 
 ## Back End  
 ### Tables  
