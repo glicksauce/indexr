@@ -8,11 +8,11 @@
 Postgresql datatbase  
 Ruby/Rails  
 React (create-react-app)  
-React Router (for user authentication)
+React Router (for user authentication)  
 Javascript (localstorage)  
 
 ## New technologies
-This project relies on parsing a user's local directory to find images (with a stretch goal to automatically parse sub-directories as well). This will involve learning some Web API's (like [https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryEntry/createReader](FileSystemDirectoryEntry))
+This project relies on parsing a user's local directory to find images (with a stretch goal to automatically parse sub-directories as well). This will involve learning some Web API's (like [FileSystemDirectoryEntry] (https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryEntry/createReader) )
 
 ## Back End  
 ### Tables  
@@ -28,7 +28,7 @@ A minimum of two tables in a one-to-many relationship, Users < Album
 Read local file director for files > array of images passed into state/props > tagged images are stored in local storage > authenticated users can save their tags into database.
 
 ### User stories
-- Mel's son brings home his first date for dinner. Mel wants to show date embarassing pictures of son as a boy but has trouble finding the image. Her albums are sorted by year. But it takes a long time to search through each directory for the right picture. Mel however uses Indexr and with a quick search of "temper tantrum" she brings up the images she needed to entertain her guests
+- Mel's son brings home his first date for dinner. Mel wants to show date embarassing pictures of son as a boy but has trouble finding the image. Her albums are sorted by year. But it takes a long time to search through each directory for the right picture. Mel however uses indexr and with a quick search of "temper tantrum" she brings up the images she needed to entertain her guests
 
 ## MVP  
 - Backend and frontend hosted on Heroku (or similiar)
