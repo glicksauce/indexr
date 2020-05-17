@@ -1,68 +1,46 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# indexr
 
-## Available Scripts
+### An advanced image viewing app that allows user to custom tag their locally stored images. User can search by tags (or exclude by tag) to quickly find the image they were thinking of.
 
-In the project directory, you can run:
+## Technologies Used
 
-### `npm start`
+### 
+Postgresql database  
+Ruby/Rails  
+React (create-react-app)  
+React Router (for user authentication)  
+Javascript (localstorage)  
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## New technologies
+This project relies on parsing a user's local directory to find images (with a stretch goal to automatically parse sub-directories as well). This will involve learning some Web API's like [FileSystemDirectoryEntry](https://developer.mozilla.org/en-US/docs/Web/API/FileSystemDirectoryEntry/createReader)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Back End  
+### Tables  
+A minimum of two tables in a one-to-many relationship, Users < Album
 
-### `npm test`
+### CRUD Actions
+- Create: Done after directory is loaded each image in array is added
+- Read: When viewing albums of tagged images
+- Update: When adding (or removing) tags to images in album
+- Destroy: when deleting albums or images from an album
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Data Flow
+Read local file director for files > array of images passed into state/props > tagged images are stored in local storage > authenticated users can save their tags into database.
 
-### `npm run build`
+### User stories
+- Mel's son brings home his first date for dinner. Mel wants to show date embarassing pictures of son as a boy but has trouble finding the image. Her albums are sorted by year. But it takes a long time to search through each directory for the right picture. Mel however uses indexr and with a quick search of "temper tantrum" she brings up the images she needed to entertain her guests
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## MVP  
+- Backend and frontend hosted on Heroku (or similiar)
+- User can select a local directory and see images in that directory
+- Tagging: user can 'tag' photos with key words. 
+- Tags are saved to state,localstorage, and DB
+- Viewing: user can enter a tag and view images with that tag
+- Sorting user can perform sorts like (images with least/most amount of tags, exclude by tag, etc.)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+## Stretch Goals and future improvements
+- Autotagging: images are tagged based on the directory they are located in
+- User creation and authentication using React Router (or similiar)
+- Authenticated user can save their localstorage into DB
+- App can work with storage on mobile devices
+- User can also tag non-local images (images from a website)
