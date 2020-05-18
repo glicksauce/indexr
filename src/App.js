@@ -91,7 +91,7 @@ getDropboxFileSearch = () => {
   .then((response) => {
         response.matches.forEach((item,index) => {
             if (item.match_type['.tag'] == "filename") {
-              //onsole.log(item.metadata.id)
+              //console.log(item.metadata.id)
               this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id)
               //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
             }
@@ -103,9 +103,28 @@ getDropboxFileSearch = () => {
   });
 }
 
+readFromLocalStorage = () =>{
+// iterate localStorage
+for (var i = 0; i < localStorage.length; i++) {
+
+  // set iteration key name
+  var key = localStorage.key(i);
+
+  // use key name to retrieve the corresponding value
+  var value = localStorage.getItem(key);
+
+  let imgObj = JSON.parse(localStorage.getItem(key))
+  // console.log the iteration key and value
+  console.log(imgObj)
+  //console.log('Key: ' + key + ', Value: ' + value);  
+
+  this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
+
+}
+    
+}
+
 //sample id is: id: "id:hJnbG6_Z4cMAAAAAAACbzA"
-
-
 
  
 
@@ -129,9 +148,13 @@ getDropboxFileSearch = () => {
   // }
 
   componentDidMount() {
+    //testing localstorage
+    //this.putInLocalStorage("testimage","/path/path","id:123",["funny","sad","true"])
+
+    this.readFromLocalStorage()
     //this.getDropboxThumbnails()
     // this.getDropboxFolderContents()
-     this.getDropboxFileSearch()
+     //this.getDropboxFileSearch()
     // console.log(Dropbox)
 
     // var button = Dropbox.createChooseButton(options);
