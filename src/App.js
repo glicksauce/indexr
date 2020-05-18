@@ -20,7 +20,7 @@ blobToFile = (theBlob, fileName) => {
   theBlob.lastModifiedDate = new Date();
   theBlob.name = fileName;
   var objectURL = URL.createObjectURL(theBlob);
-  let myImage = $('<img id="blob-created">')
+  let myImage = $('<img class="blob-created">')
   myImage.attr('src', objectURL)
   $('.App').append(myImage)
   return theBlob;
@@ -52,7 +52,7 @@ getDropboxUserName = () => {
 //get list of contents including subfolders
 getDropboxFolderContents = () => {
       var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
-  dbx.filesListFolder({ path: "/camera uploads", recursive: true})
+  dbx.filesListFolder({ path: "/camera uploads"})
     .then(function(response) {
       console.log(response);
     })
@@ -62,14 +62,31 @@ getDropboxFolderContents = () => {
   }
 
 //get thumbnails per given path to file
-getDropboxThumbnails = () => {
+getDropboxThumbnails = (path, imageName) => {
 var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
-dbx.filesGetThumbnail({ path: "/camera uploads/2019-01-30 07.44.59.jpg", format: "jpeg", size: "w256h256", mode: "bestfit"})
+dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w256h256", mode: "bestfit"})
   .then(response => {
-    this.blobToFile(response.fileBlob, "image1")
+    this.blobToFile(response.fileBlob, imageName)
     //console.log(response.fileBlob);
   })
   //.then(img => this.blobToFile(img.fileBlob, "image1"))
+  .catch(function(error) {
+    console.log(error);
+  });
+}
+
+//files search. can search ".jpg" for all jpg files. Seems to be a 100 result limit but there is a "more: true" and start: 101 result paassed:
+getDropboxFileSearch = () => {
+  var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
+  dbx.filesSearch({ path: "", query: ".jpg", start: 1001})
+  .then((response) => {
+        response.matches.forEach((item,index) => {
+            if (item.match_type['.tag'] == "filename") {
+              this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
+            }
+        })
+    console.log(response);
+  })
   .catch(function(error) {
     console.log(error);
   });
@@ -101,7 +118,9 @@ dbx.filesGetThumbnail({ path: "/camera uploads/2019-01-30 07.44.59.jpg", format:
   // }
 
   componentDidMount() {
-    this.getDropboxThumbnails()
+    //this.getDropboxThumbnails()
+    this.getDropboxFolderContents()
+    this.getDropboxFileSearch()
     // console.log(Dropbox)
 
     // var button = Dropbox.createChooseButton(options);
