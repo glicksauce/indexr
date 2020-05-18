@@ -14,12 +14,25 @@ var Dropbox = require('dropbox').Dropbox;
 
 class App extends Component {
 
+addBlobtoLocalStorage = (imageId, objectURL) => {
+  let localStorageImage = JSON.parse(localStorage.getItem(imageId))
+  console.log(localStorageImage)
+  localStorageImage["ImageBlob"] = objectURL
+  console.log("localstorage image is: " + localStorageImage)
+  localStorage.setItem(imageId, JSON.stringify(localStorageImage))
+} 
   
-blobToFile = (theBlob, fileName) => {
+blobToFile = (theBlob, fileName, imageId) => {
   //A Blob() is almost a File() - it's just missing the two properties below which we will add
   theBlob.lastModifiedDate = new Date();
   theBlob.name = fileName;
   var objectURL = URL.createObjectURL(theBlob);
+
+  //if imageId is passed add blob to localStorage
+  if (imageId){
+    this.addBlobtoLocalStorage(imageId, objectURL)
+  }
+  console.log(objectURL)
   let myImage = $('<img class="blob-created">')
   myImage.attr('src', objectURL)
   $('.App').append(myImage)
@@ -66,13 +79,23 @@ getDropboxThumbnails = (path, imageName) => {
 var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
 dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w256h256", mode: "bestfit"})
   .then(response => {
-    this.blobToFile(response.fileBlob, imageName)
+    //console.log(response)
+    this.blobToFile(response.fileBlob, imageName, response.id)
     //console.log(response.fileBlob);
   })
   //.then(img => this.blobToFile(img.fileBlob, "image1"))
   .catch(function(error) {
     console.log(error);
   });
+}
+
+getLocalStorageThumbnails = (imageId) =>{
+  let imageBlob = JSON.parse(localStorage.getItem(imageId)).ImageBlob
+  console.log("blob pulled")
+  console.log(imageBlob)
+  let myImage = $('<img class="blob-created-1">')
+  myImage.attr('src', imageBlob)
+  $('.App').append(myImage)
 }
 
 putInLocalStorage = (imagePath, imageName, imageId, tags) =>{
@@ -115,11 +138,20 @@ for (var i = 0; i < localStorage.length; i++) {
 
   let imgObj = JSON.parse(localStorage.getItem(key))
   // console.log the iteration key and value
-  console.log(imgObj)
+  //console.log(imgObj)
   //console.log('Key: ' + key + ', Value: ' + value);  
 
-  this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
+  //query based on tags 
+  // if (imgObj.tags.includes("funny")) {
+  //   this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
+  // }
 
+  //testing reading by id
+  if (key == 'id:hJnbG6_Z4cMAAAAAAABR6g'){
+    console.log("key found")
+    this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
+    this.getLocalStorageThumbnails(key)
+  }
 }
     
 }
@@ -149,7 +181,7 @@ for (var i = 0; i < localStorage.length; i++) {
 
   componentDidMount() {
     //testing localstorage
-    //this.putInLocalStorage("testimage","/path/path","id:123",["funny","sad","true"])
+    //this.putInLocalStorage("testimage","https://furtheredagogy.files.wordpress.com/2018/02/road-sign-361513_960_720.jpg","id:123",["funny","sad","true"])
 
     this.readFromLocalStorage()
     //this.getDropboxThumbnails()
