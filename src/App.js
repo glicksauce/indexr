@@ -75,6 +75,15 @@ dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w256h256", mode: "bes
   });
 }
 
+putInLocalStorage = (imagePath, imageName, imageId, tags) =>{
+  localStorage.setItem(imageId, JSON.stringify({
+    'imagePath': imagePath,
+    'imageName': imageName,
+    'tags': tags || ''
+
+  }))
+}
+
 //files search. can search ".jpg" for all jpg files. Seems to be a 100 result limit but there is a "more: true" and start: 101 result paassed:
 getDropboxFileSearch = () => {
   var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
@@ -82,10 +91,12 @@ getDropboxFileSearch = () => {
   .then((response) => {
         response.matches.forEach((item,index) => {
             if (item.match_type['.tag'] == "filename") {
-              this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
+              //onsole.log(item.metadata.id)
+              this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id)
+              //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
             }
         })
-    console.log(response);
+    //console.log(response);
   })
   .catch(function(error) {
     console.log(error);
@@ -119,8 +130,8 @@ getDropboxFileSearch = () => {
 
   componentDidMount() {
     //this.getDropboxThumbnails()
-    this.getDropboxFolderContents()
-    this.getDropboxFileSearch()
+    // this.getDropboxFolderContents()
+     this.getDropboxFileSearch()
     // console.log(Dropbox)
 
     // var button = Dropbox.createChooseButton(options);
