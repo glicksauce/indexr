@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import listReactFiles from 'list-react-files'
 import * as $ from 'jquery'
+import ThumbnailBrowswer from "./components/ThumbnailBrowser.js"
 require('isomorphic-fetch');
 
 
@@ -14,28 +15,34 @@ var Dropbox = require('dropbox').Dropbox;
 
 class App extends Component {
 
-addBlobtoLocalStorage = (imageId, objectURL) => {
-  let localStorageImage = JSON.parse(localStorage.getItem(imageId))
-  console.log(localStorageImage)
-  localStorageImage["ImageBlob"] = objectURL
-  console.log("localstorage image is: " + localStorageImage)
-  localStorage.setItem(imageId, JSON.stringify(localStorageImage))
-} 
-  
+//feature does not work at this time
+// addBlobtoLocalStorage = (imageId, objectURL) => {
+//   let localStorageImage = JSON.parse(localStorage.getItem(imageId))
+//   console.log(localStorageImage)
+//   localStorageImage["imageBlob"] = objectURL
+//   console.log("localstorage image is:")
+//   console.log(localStorageImage)
+//   localStorage.setItem(imageId, JSON.stringify(localStorageImage))
+// }
+
+//takes a blob and renders image. If imageid is passed it will save that to localstorage  
 blobToFile = (theBlob, fileName, imageId) => {
   //A Blob() is almost a File() - it's just missing the two properties below which we will add
   theBlob.lastModifiedDate = new Date();
   theBlob.name = fileName;
   var objectURL = URL.createObjectURL(theBlob);
-
+  //console.log("blobtofile is: ", objectURL)
   //if imageId is passed add blob to localStorage
-  if (imageId){
-    this.addBlobtoLocalStorage(imageId, objectURL)
-  }
+  //UPDDATE: PROBABLY NOT POSSIBLE TO PARSE BLOBS FROM LOCALSTORAGE COMMENTING THIS OUT FOR NOW
+  // if (imageId){
+  //   this.addBlobtoLocalStorage(imageId, objectURL)
+  // }
   console.log(objectURL)
   let myImage = $('<img class="blob-created">')
-  myImage.attr('src', objectURL)
-  $('.App').append(myImage)
+  myImage
+  .attr('src', objectURL)
+  .attr('class', 'thumb-image')
+  $('.thumb-browser').append(myImage)
   return theBlob;
 }
 
@@ -90,12 +97,12 @@ dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w256h256", mode: "bes
 }
 
 getLocalStorageThumbnails = (imageId) =>{
-  let imageBlob = JSON.parse(localStorage.getItem(imageId)).ImageBlob
+  let imageBlob = JSON.parse(localStorage.getItem(imageId)).imageBlob
   console.log("blob pulled")
   console.log(imageBlob)
-  let myImage = $('<img class="blob-created-1">')
-  myImage.attr('src', imageBlob)
-  $('.App').append(myImage)
+  let myImage3 = new Image()
+  myImage3.src = imageBlob
+  $('.App').append(myImage3)
 }
 
 putInLocalStorage = (imagePath, imageName, imageId, tags) =>{
@@ -126,9 +133,14 @@ getDropboxFileSearch = () => {
   });
 }
 
-readFromLocalStorage = () =>{
+readFromLocalStorage = (resultsQty) =>{
+
+//default of results to return
+if (resultsQty == undefined){
+  resultsQty = 20
+}
 // iterate localStorage
-for (var i = 0; i < localStorage.length; i++) {
+for (var i = 0; i < resultsQty; i++) {
 
   // set iteration key name
   var key = localStorage.key(i);
@@ -147,11 +159,12 @@ for (var i = 0; i < localStorage.length; i++) {
   // }
 
   //testing reading by id
-  if (key == 'id:hJnbG6_Z4cMAAAAAAABR6g'){
-    console.log("key found")
     this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
-    this.getLocalStorageThumbnails(key)
-  }
+
+
+    //this function not possible at this time
+    //this.getLocalStorageThumbnails(key)
+  
 }
     
 }
@@ -183,7 +196,7 @@ for (var i = 0; i < localStorage.length; i++) {
     //testing localstorage
     //this.putInLocalStorage("testimage","https://furtheredagogy.files.wordpress.com/2018/02/road-sign-361513_960_720.jpg","id:123",["funny","sad","true"])
 
-    this.readFromLocalStorage()
+    // this.readFromLocalStorage()
     //this.getDropboxThumbnails()
     // this.getDropboxFolderContents()
      //this.getDropboxFileSearch()
@@ -217,11 +230,14 @@ for (var i = 0; i < localStorage.length; i++) {
           </header>
           <div className="open-file">
             <h3>select a directory to start tagging photos</h3>
-            <input type="file"></input>
+            {/* <input type="file"></input>
             <a href="/downloads/" >home</a>
             <img src="file:///home/jgman/Desktop/Screenshot%20from%202020-04-25%2021-21-01.png"></img>
-            <img src="https://www.dropbox.com/home/Camera%20Uploads?preview=2019-01-30+07.44.59.jpg"></img>
+            <img src="https://www.dropbox.com/home/Camera%20Uploads?preview=2019-01-30+07.44.59.jpg"></img> */}
           </div>
+          <ThumbnailBrowswer 
+            readFromLocalStorage = {this.readFromLocalStorage}
+            />
         </div>
       );
   }

@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.thumb-browser{
+  width: 50%;
+  background: yellow;
+  float: right;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.thumb-image{
+ 
+}
