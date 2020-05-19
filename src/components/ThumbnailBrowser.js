@@ -15,7 +15,7 @@ class ThumbnailBrowser extends Component{
     render () {
         return(
             
-            <div class='thumb-browser'>
+            <div className='thumb-browser'>
                 <h3>Browse Thumbnails</h3>
             </div>
         )
