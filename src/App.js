@@ -145,18 +145,20 @@ blobToFile = (theBlob, fileName, imageId) => {
   theBlob.name = fileName;
   var objectURL = URL.createObjectURL(theBlob);
   //console.log("blobtofile is: ", objectURL)
-  //if imageId is passed add blob to localStorage
+
   //UPDDATE: PROBABLY NOT POSSIBLE TO PARSE BLOBS FROM LOCALSTORAGE COMMENTING THIS OUT FOR NOW
   // if (imageId){
   //   this.addBlobtoLocalStorage(imageId, objectURL)
   // }
+
   //console.log(objectURL)
   let myImage = $('<img class="blob-created">')
   myImage
   .attr('src', objectURL)
   .attr('class', 'thumb-image')
-  $('.thumb-browser').append(myImage)
-  return theBlob;
+  $('.thumb-browser').prepend(myImage)
+  //return theBlob;
+  return objectURL
 }
 
 //=========================
@@ -165,15 +167,17 @@ blobToFile = (theBlob, fileName, imageId) => {
 
 loadFullImage = async() =>{
   
-  let imagetest = await this.getDropboxHighQualityThumb('/data/my pictures/2008/2008-11-18 hawaii/north shore/img_2515.jpg', 'TestImage')
-  console.log(imagetest)
+  let imageMain = await this.getDropboxHighQualityThumb('/data/my pictures/2008/2008-11-18 hawaii/north shore/img_2515.jpg', 'TestImage')
+  console.log(imageMain)
 
+  let imageBlob = this.blobToFile(imageMain.fileBlob, imageMain.name)
+  console.log(imageBlob)
 
-  let myImage = $('<img class="blob-created">')
+  let myImage = $('<img class="image-main">')
   myImage
-  .attr('src', 'https://dl.dropboxusercontent.com/apitl/1/AaEMsky_eqv9rg04p_M7iQTdQiUWXX6QK915tdTslWf_SD_BX1w96iDSY_t21YCcFek6lDf83v5jXaT0QCpRwbTPOcYZmXaDqemovId-9lTXRVwdkDnGVOmM-z4v8t0HmgMByI6rNNhWUZTXwcBLrFrX5AbxEb1LhE38AkvDMEnCPG0DzH5yIKBzNpA7zTvPCviYgPuKaqv1KP438l1Ycd3JvwQlBNdUHtpaPDecWUgogxXExuFwPs-dvhcbAZ8PnXNUQO_oB6xVfsRrBD8n8fLRp4Rkq8Kqb1w6Az0IbPBWa37qKUDZhKIPFaDv1pmkerBeO_-RMKpbTKHI4ipQAcJWH6CaDgq2KI57j1UwhNK0bEKNU3JHb8AJ8ubJEQ55Flb5RBRy7FT3R-whNcaC-v2at6HKx6qmj-Z7tOUPChOQKo9avzWMB3-L33_niZOH72A')
+  .attr('src', imageBlob)
   .attr('class', 'full-image')
-  $('.App').append(myImage)
+  $('.left-container').append(myImage)
   
 }
 
@@ -214,16 +218,22 @@ loadFullImage = async() =>{
           <header className="App-header">
             <h1>Welcome to indexr</h1>
           </header>
-          <div className="open-file">
+          <div className="container">
             <h3>select a directory to start tagging photos</h3>
+            <div className="left-container">
+
+            </div>
+            <div className="right-container">
+              <ThumbnailBrowswer 
+              readFromLocalStorage = {this.readFromLocalStorage}
+              />
+            </div>
             {/* <input type="file"></input>
             <a href="/downloads/" >home</a>
             <img src="file:///home/jgman/Desktop/Screenshot%20from%202020-04-25%2021-21-01.png"></img>
             <img src="https://www.dropbox.com/home/Camera%20Uploads?preview=2019-01-30+07.44.59.jpg"></img> */}
           </div>
-          <ThumbnailBrowswer 
-            readFromLocalStorage = {this.readFromLocalStorage}
-            />
+
         </div>
       );
   }
