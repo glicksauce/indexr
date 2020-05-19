@@ -190,7 +190,7 @@ thumbnailOnClick = (id) =>{
 loadFullImage = async(localStorageObj) =>{
   
   let imageMain = await this.getDropboxHighQualityThumb(localStorageObj.imagePath, localStorageObj.imageName)
-  console.log(imageMain)
+  console.log("image main ", imageMain.id)
 
   let imageBlob = this.blobToFile(imageMain.fileBlob, imageMain.name)
   console.log(imageBlob)
@@ -199,16 +199,41 @@ loadFullImage = async(localStorageObj) =>{
   $('.full-image').remove()
 
   let myImage = $('<img>')
-  myImage
-  .attr('src', imageBlob)
-  .attr('class', 'full-image')
+  myImage.attr({
+  'src': imageBlob,
+  'class': 'full-image',
+  'data-id': imageMain.id
+  })
   $('.left-container').append(myImage)
 
   $('.tags-main').val(localStorageObj.tags)
   
 }
 
+//=========================
+//Handle Changes and localStorage updates
+//=========================
+
+handleChange = (event) => {
+  //(event.target.id, event.target.value)
+  //this.setState({[event.target.id] : event.target.value})
+  //console.log(event.target.value)
+  this.tagsUpdate($('.full-image').attr('data-id'), event.target.value)
+}
+
+tagsUpdate = (imageId, tags) => {
+  //only do this if args are passed
+  if (imageId) {
+    console.log(imageId, tags)
+    let localStorageObj = JSON.parse(localStorage.getItem(imageId))
+    let tagsArray = tags.split(" ")
+    //console.log(tagsArray)
+    localStorageObj.tags = tagsArray
+    localStorage.setItem(imageId, JSON.stringify(localStorageObj))
+  }
+}
   componentDidMount() {
+    $('.tags-main').change(this.handleChange)
     //this.loadFullImage()
     //testing localstorage
     //this.putInLocalStorage("testimage","https://furtheredagogy.files.wordpress.com/2018/02/road-sign-361513_960_720.jpg","id:123",["funny","sad","true"])
