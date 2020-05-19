@@ -48,7 +48,11 @@ getDropboxThumbnails = (path, imageName) => {
   dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w256h256", mode: "bestfit"})
   .then(response => {
   //console.log(response)
-  this.blobToFile(response.fileBlob, imageName, response.id)
+  //get the image BlobURL of the image
+  let imageBlobURL = this.blobToFile(response.fileBlob, imageName, response.id)
+
+  //render thumbnail
+  this.showThumbnailImage(imageBlobURL, response.id)
   //console.log(response.fileBlob);
   })
   //.then(img => this.blobToFile(img.fileBlob, "image1"))
@@ -138,7 +142,19 @@ readFromLocalStorage = (resultsQty) =>{
 //BLOB AND IMAGE RENDERING
 //=========================
 
-//takes a blob and renders image. If imageid is passed it will save that to localstorage  
+//render thumbnail image
+showThumbnailImage = (blobURL, id) =>{
+  let myImage = $('<img class="blob-created">')
+  myImage
+  .attr('src', blobURL)
+  .attr('class', 'thumb-image')
+  .attr('id', id)
+  $('.thumb-browser').prepend(myImage)
+
+  //add event for when clicked
+  myImage.click(() => this.thumbnailOnClick(id))
+}
+//takes a blob and renders image 
 blobToFile = (theBlob, fileName, imageId) => {
   //A Blob() is almost a File() - it's just missing the two properties below which we will add
   theBlob.lastModifiedDate = new Date();
@@ -151,12 +167,6 @@ blobToFile = (theBlob, fileName, imageId) => {
   //   this.addBlobtoLocalStorage(imageId, objectURL)
   // }
 
-  //console.log(objectURL)
-  let myImage = $('<img class="blob-created">')
-  myImage
-  .attr('src', objectURL)
-  .attr('class', 'thumb-image')
-  $('.thumb-browser').prepend(myImage)
   //return theBlob;
   return objectURL
 }
@@ -165,24 +175,41 @@ blobToFile = (theBlob, fileName, imageId) => {
 //MOUSE FUNCTIONS
 //=========================
 
-loadFullImage = async() =>{
+//
+thumbnailOnClick = (id) =>{
+  console.log(id + " clicked")
+
+  //pull image from localstorage
+  let clickedImage = JSON.parse(localStorage.getItem(id))
+  console.log(clickedImage)
+
+  //pass image to load in main section
+  this.loadFullImage(clickedImage)
+}
+
+loadFullImage = async(localStorageObj) =>{
   
-  let imageMain = await this.getDropboxHighQualityThumb('/data/my pictures/2008/2008-11-18 hawaii/north shore/img_2515.jpg', 'TestImage')
+  let imageMain = await this.getDropboxHighQualityThumb(localStorageObj.imagePath, localStorageObj.imageName)
   console.log(imageMain)
 
   let imageBlob = this.blobToFile(imageMain.fileBlob, imageMain.name)
   console.log(imageBlob)
 
-  let myImage = $('<img class="image-main">')
+  //remove any existing image first
+  $('.full-image').remove()
+
+  let myImage = $('<img>')
   myImage
   .attr('src', imageBlob)
   .attr('class', 'full-image')
   $('.left-container').append(myImage)
+
+  $('.tags-main').val(localStorageObj.tags)
   
 }
 
   componentDidMount() {
-    this.loadFullImage()
+    //this.loadFullImage()
     //testing localstorage
     //this.putInLocalStorage("testimage","https://furtheredagogy.files.wordpress.com/2018/02/road-sign-361513_960_720.jpg","id:123",["funny","sad","true"])
 
@@ -221,7 +248,12 @@ loadFullImage = async() =>{
           <div className="container">
             <h3>select a directory to start tagging photos</h3>
             <div className="left-container">
-
+              <div className="left-container-image-container">
+                <div className="tag-section">
+                  <h3>tags</h3>
+                  <input className="tags-main" type="text"></input>
+                </div>
+              </div>
             </div>
             <div className="right-container">
               <ThumbnailBrowswer 

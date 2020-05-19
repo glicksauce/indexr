@@ -15,7 +15,7 @@ code {
 .thumb-browser{
   margin: 0 200px;
   width: 200px;
-  background: yellow;
+  /* background: yellow; */
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -25,22 +25,25 @@ code {
  margin: 5px 0;
 }
 
-.thumb-browser img{
+/* .thumb-browser img{
   width: 200px;
-}
+} */
 
 .left-container {
   width: 70%;
   float: left;
-  background: red;
+  /* background: red; */
 }
 
-.left-container img{
+.full-image{
   width: 50%;
 }
 
+.left-container-image-container{
+  margin: 0 auto;
+}
 .right-container{
   width: 25%;
-  background: green;
+  /* background: green; */
   float: left;
 }
