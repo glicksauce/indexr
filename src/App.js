@@ -4,6 +4,7 @@ import './App.css';
 import listReactFiles from 'list-react-files'
 import * as $ from 'jquery'
 import ThumbnailBrowswer from "./components/ThumbnailBrowser.js"
+import TagSearch from "./components/TagSearch.js"
 import { getNodeText } from '@testing-library/react';
 require('isomorphic-fetch');
 
@@ -13,6 +14,12 @@ var Dropbox = require('dropbox').Dropbox;
 
 
 class App extends Component {
+//=========================
+//State
+//=========================
+state = {
+  tagsObj: {}
+}
 
 //=========================
 //DROPBOX SDK FUNCTIONS
@@ -77,12 +84,12 @@ getDropboxHighQualityThumb = async(path, imageName) => {
 //files search. can search ".jpg" for all jpg files. Seems to be a 100 result limit but there is a "more: true" and start: 101 result paassed:
 getDropboxFileSearch = () => {
   var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
-  dbx.filesSearch({ path: "", query: ".jpg", start: 1001})
+  dbx.filesSearch({ path: "", query: ".jpg", start: 2001})
   .then((response) => {
         response.matches.forEach((item,index) => {
             if (item.match_type['.tag'] == "filename") {
-              //console.log(item.metadata.id)
-              this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id)
+              console.log(item)
+              this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
               //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
             }
         })
@@ -97,10 +104,11 @@ getDropboxFileSearch = () => {
 //LOCALSTORAGE REQUESTS
 //=========================
 
-putInLocalStorage = (imagePath, imageName, imageId, tags) =>{
+putInLocalStorage = (imagePath, imageName, imageId, client_modified_date, tags) =>{
   localStorage.setItem(imageId, JSON.stringify({
     'imagePath': imagePath,
     'imageName': imageName,
+    'client_modified_date': client_modified_date,
     'tags': tags || ''
 
   }))
@@ -136,6 +144,37 @@ readFromLocalStorage = (resultsQty) =>{
 
     }
         
+}
+
+getTagsFromLocalStorage = () =>{
+  let tagsObj = {}
+
+  for (var i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i)
+    let value = JSON.parse(localStorage.getItem(key))
+
+    if (value.tags) {
+        Object.values(value.tags).forEach( tag => {
+          //console.log("geTagsFromLocalStroage tag is: ", tag)
+
+          if (tag in tagsObj){
+            tagsObj[tag] += 1
+          } else { 
+            tagsObj[tag] = 1
+          }
+      })
+    }
+    //let formattedTags = (Object.values(value.tags))
+    //tagsArray.push(formattedTags)
+  }
+  //console.log("tags in use are: " + tagsArray)
+  //console.log("tags obj is : " + Object.keys(tagsObj))
+
+  this.setState({
+    tagsObj: tagsObj
+  })
+
+  return tagsObj
 }
 
 //=========================
@@ -177,23 +216,24 @@ blobToFile = (theBlob, fileName, imageId) => {
 
 //
 thumbnailOnClick = (id) =>{
-  console.log(id + " clicked")
+  //console.log(id + " clicked")
 
   //pull image from localstorage
   let clickedImage = JSON.parse(localStorage.getItem(id))
-  console.log(clickedImage)
+  //console.log(clickedImage)
 
   //pass image to load in main section
   this.loadFullImage(clickedImage)
 }
 
 loadFullImage = async(localStorageObj) =>{
-  
+  console.log(localStorageObj)
+
   let imageMain = await this.getDropboxHighQualityThumb(localStorageObj.imagePath, localStorageObj.imageName)
-  console.log("image main ", imageMain.id)
+  //console.log("image main ", imageMain.id)
 
   let imageBlob = this.blobToFile(imageMain.fileBlob, imageMain.name)
-  console.log(imageBlob)
+  //console.log(imageBlob)
 
   //remove any existing image first
   $('.full-image').remove()
@@ -204,10 +244,14 @@ loadFullImage = async(localStorageObj) =>{
   'class': 'full-image',
   'data-id': imageMain.id
   })
-  $('.left-container').append(myImage)
+  $('.left-container-image-container').prepend(myImage)
 
-  $('.tags-main').val(localStorageObj.tags)
-  
+  $('.tags-main').val(Object.values(localStorageObj.tags).join(' '))
+
+  $('.image-path').val(localStorageObj.imagePath)
+
+  $('.image-date').val(localStorageObj.client_modified_date)
+
 }
 
 //=========================
@@ -224,7 +268,9 @@ handleChange = (event) => {
 tagsUpdate = (imageId, tags) => {
   //only do this if args are passed
   if (imageId) {
-    console.log(imageId, tags)
+    //console.log(imageId, tags)
+
+    //pull item from localstorage, convert tags to array then re-set tags in local storage
     let localStorageObj = JSON.parse(localStorage.getItem(imageId))
     let tagsArray = tags.split(" ")
     //console.log(tagsArray)
@@ -241,6 +287,8 @@ tagsUpdate = (imageId, tags) => {
     // this.readFromLocalStorage()
     //this.getDropboxThumbnails()
     // this.getDropboxFolderContents()
+
+    //function to scan dropbox for image files
      //this.getDropboxFileSearch()
     // console.log(Dropbox)
 
@@ -277,8 +325,18 @@ tagsUpdate = (imageId, tags) => {
                 <div className="tag-section">
                   <h3>tags</h3>
                   <input className="tags-main" type="text"></input>
+                  <h3 className="line-2">image path</h3>
+                  <input className="no-edit image-path"></input>
+                  <h3 className="line-3">date</h3>
+                  <input className="no-edit image-date"></input>
                 </div>
               </div>
+            </div>
+            <div className="middle-container">
+              <TagSearch
+                tagsObj = {this.state.tagsObj}
+                getTagsFromLocalStorage = {this.getTagsFromLocalStorage}
+              />
             </div>
             <div className="right-container">
               <ThumbnailBrowswer 

@@ -13,12 +13,11 @@ code {
 }
 
 .thumb-browser{
-  margin: 0 200px;
-  width: 200px;
+  margin: 0 20px;
+  width: 300px;
   /* background: yellow; */
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
 }
 
 .thumb-image{
@@ -31,19 +30,41 @@ code {
 
 .left-container {
   width: 70%;
+  max-width: 800px;
   float: left;
   /* background: red; */
 }
 
 .full-image{
-  width: 50%;
+  width: 90%;
 }
 
 .left-container-image-container{
   margin: 0 auto;
 }
+
+.line-2, .line-3{
+  clear:both;
+}
+.no-edit{
+  
+}
+.tag-section{
+  margin: 5px 15px;
+}
+
+.tag-section h3, .tag-section input{
+  margin: 0 10px;
+  float: left;
+}
+
+.middle-container{
+  float: left;
+  background: orange;
+}
+
 .right-container{
-  width: 25%;
-  /* background: green; */
+  min-width: 250px;
+  background: green;
   float: left;
 }
