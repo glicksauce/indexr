@@ -18,7 +18,8 @@ class App extends Component {
 //State
 //=========================
 state = {
-  tagsObj: {}
+  tagsObj: {}, //array of tags in use
+  selectedSearchTags: [] //search terms selected
 }
 
 //=========================
@@ -319,12 +320,12 @@ tagsUpdate = (imageId, tags) => {
             <h1>Welcome to indexr</h1>
           </header>
           <div className="container">
-            <h3>select a directory to start tagging photos</h3>
+            <h3>select a thumbnail to preview and add tags</h3>
             <div className="left-container">
               <div className="left-container-image-container">
                 <div className="tag-section">
                   <h3>tags</h3>
-                  <input className="tags-main" type="text"></input>
+                  <input className="tags-main" placeholder="tags go here" type="text"></input>
                   <h3 className="line-2">image path</h3>
                   <input className="no-edit image-path"></input>
                   <h3 className="line-3">date</h3>
