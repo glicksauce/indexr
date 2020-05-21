@@ -120,14 +120,16 @@ clearThumbnails = () =>{
 }
 
 readFromLocalStorage = (tags, resultsQty) =>{
-    //console.log(tags)
+  let resultsCount = 0
+
+    console.log("rendering " + tags)
     //default of results to return
     if (resultsQty == undefined){
       resultsQty = 100
     }
     // iterate localStorage
     for (var i = 0; i < resultsQty; i++) {
-
+        
         // set iteration key name
         var key = localStorage.key(i);
 
@@ -142,17 +144,22 @@ readFromLocalStorage = (tags, resultsQty) =>{
         //query based on tags 
         // tags param of "" indicates to search all tags
         if (tags == "") {
-          this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)          
+          this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)   
+          resultsCount += 1       
         } else if (imgObj.tags.length > 0) {
             //if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) { //'OR' SEARCH FUNCTION
             if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION             
               this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
-              console.log( typeof imgObj.tags, imgObj.tags, Array.isArray(imgObj.tags))
+              resultsCount += 1
               //this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
             }
         }
 
     }
+
+    //update thumbnail count
+    let totalImages = localStorage.length
+    $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
         
 }
 
@@ -198,7 +205,7 @@ showThumbnailImage = (blobURL, id) =>{
   .attr('src', blobURL)
   .attr('class', 'thumb-image')
   .attr('id', id)
-  $('.thumb-browser').prepend(myImage)
+  $('.thumb-browser').append(myImage)
 
   //add event for when clicked
   myImage.click(() => this.thumbnailOnClick(id))

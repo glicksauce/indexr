@@ -14,30 +14,70 @@ class TagSearch extends Component{
     }
 
     //add tag to state/props when clicked
-    tagOnClick = (event) =>{
+    tagOnClick = (tag, isCustomTagSearch, bypassImageRender) =>{
+        console.log("tag is ", tag, " " + typeof tag)
         //console.log(event.target.id)
-
+        //console.log(isCustomTagSearch)
         //set search tags to whatever is in state and then find our new tag element in array
         let newSearchTags = Object.values(this.state.selectedSearchTags)
-        let parseSearchTag = newSearchTags.indexOf(event.target.id)
+        let parseSearchTag = newSearchTags.indexOf(tag)
 
         if (parseSearchTag != -1){ //toggle off
             //console.log(Object.values(this.state.selectedSearchTags))
             //console.log(parseSearchTag)
             //console.log(newSearchTags)
             newSearchTags.splice(parseSearchTag,1)
-            $('#' + event.target.id).css("color", "black")
+
+            if (!isCustomTagSearch){
+                $('#' + tag).css("color", "black")
+            }
         } else { //toggle on
-            $('#' + event.target.id).css("color", "blue")
-            newSearchTags.push(event.target.id)
+            if (!isCustomTagSearch) {
+                $('#' + tag).css("color", "blue")
+            }
+            newSearchTags.push(tag)
         }
 
+        this.props.clearThumbnails()
         this.setState({
             selectedSearchTags: newSearchTags
+        }, () =>{
+            if (!bypassImageRender) {
+                this.props.readFromLocalStorage(newSearchTags)
+            } else {
+                console.log("bypassed!")
+            }
         })
-        this.props.clearThumbnails()
-        this.props.readFromLocalStorage(newSearchTags)
+                
         //console.log(newSearchTags)
+    }
+
+    customTagOnChange = (event) =>{
+        let existingValue = event.target.id.split(" ")
+        existingValue.forEach((value,index) => {
+            if (value != ""){
+                if (index == existingValue.length -1){ //bypass render images unless on last loop through
+                    this.tagOnClick(value, true)
+                } else{
+                    this.tagOnClick(value, true, true)
+                }
+            }   
+
+        })
+        
+        event.target.id = event.target.value
+
+        let newValue = event.target.id.split(" ")
+        newValue.forEach((value,index) => {
+            if (value != ""){
+                if (index == existingValue.length -1){ //bypass render images unless on last loop through
+                    this.tagOnClick(value, true)
+                } else{
+                    this.tagOnClick(value, true, true)
+                }
+            }   
+
+        })
     }
 
     renderTagsUsed = (tags) =>{
@@ -48,9 +88,15 @@ class TagSearch extends Component{
             let $tag = $('<h5>')
                 .text(key + " (" + tags[key] + ")")
                 .attr("id", key)
-            $tag.click(this.tagOnClick)
+            $tag.click(() => this.tagOnClick(key))
             $('.tags-used').append($tag)
         })
+
+        let $customTag = $('<input>')
+        $customTag.change(this.customTagOnChange)
+        .attr("class","custom-tag-input")
+        .attr("placeholder","custom tag search")
+        $('.tags-used').prepend($customTag)
         
     }
 
