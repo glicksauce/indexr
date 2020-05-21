@@ -15,24 +15,29 @@ class TagSearch extends Component{
 
     //add tag to state/props when clicked
     tagOnClick = (event) =>{
-        console.log(event.target.id)
+        //console.log(event.target.id)
 
+        //set search tags to whatever is in state and then find our new tag element in array
         let newSearchTags = Object.values(this.state.selectedSearchTags)
         let parseSearchTag = newSearchTags.indexOf(event.target.id)
 
         if (parseSearchTag != -1){ //toggle off
             //console.log(Object.values(this.state.selectedSearchTags))
-            console.log(parseSearchTag)
-            console.log(newSearchTags)
+            //console.log(parseSearchTag)
+            //console.log(newSearchTags)
             newSearchTags.splice(parseSearchTag,1)
+            $('#' + event.target.id).css("color", "black")
         } else { //toggle on
-            $('#' + event.target.id).attr("color", "blue")
+            $('#' + event.target.id).css("color", "blue")
             newSearchTags.push(event.target.id)
         }
 
         this.setState({
             selectedSearchTags: newSearchTags
         })
+        this.props.clearThumbnails()
+        this.props.readFromLocalStorage(newSearchTags)
+        //console.log(newSearchTags)
     }
 
     renderTagsUsed = (tags) =>{
@@ -50,10 +55,13 @@ class TagSearch extends Component{
     }
 
     componentDidMount() {
+       
         let tagsObj = this.props.getTagsFromLocalStorage()
         this.renderTagsUsed(tagsObj)
+        //$('#smoke').css("background", "blue")
     }
     render () {
+        
         return(
             
             <div className='tag-search'>

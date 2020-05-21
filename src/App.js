@@ -115,33 +115,41 @@ putInLocalStorage = (imagePath, imageName, imageId, client_modified_date, tags) 
   }))
 }
 
-readFromLocalStorage = (resultsQty) =>{
+clearThumbnails = () =>{
+  $('.thumb-image').remove()
+}
 
+readFromLocalStorage = (tags, resultsQty) =>{
+    //console.log(tags)
     //default of results to return
     if (resultsQty == undefined){
-      resultsQty = 20
+      resultsQty = 100
     }
     // iterate localStorage
     for (var i = 0; i < resultsQty; i++) {
 
-      // set iteration key name
-      var key = localStorage.key(i);
+        // set iteration key name
+        var key = localStorage.key(i);
 
-      // use key name to retrieve the corresponding value
-      var value = localStorage.getItem(key);
+        // use key name to retrieve the corresponding value
+        var value = localStorage.getItem(key);
 
-      let imgObj = JSON.parse(localStorage.getItem(key))
-      // console.log the iteration key and value
-      //console.log(imgObj)
-      //console.log('Key: ' + key + ', Value: ' + value);  
+        let imgObj = JSON.parse(localStorage.getItem(key))
+        // console.log the iteration key and value
+        //console.log(imgObj)
+        //console.log('Key: ' + key + ', Value: ' + value);  
 
-      //query based on tags 
-      // if (imgObj.tags.includes("funny")) {
-      //   this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
-      // }
-
-      //testing reading by id
-        this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)
+        //query based on tags 
+        // tags param of "" indicates to search all tags
+        if (tags == "") {
+          this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)          
+        } else if (imgObj.tags.length > 0) {
+            if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) {
+              this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
+              console.log( typeof imgObj.tags, imgObj.tags, Array.isArray(imgObj.tags))
+              //this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
+            }
+        }
 
     }
         
@@ -337,6 +345,8 @@ tagsUpdate = (imageId, tags) => {
               <TagSearch
                 tagsObj = {this.state.tagsObj}
                 getTagsFromLocalStorage = {this.getTagsFromLocalStorage}
+                readFromLocalStorage = {this.readFromLocalStorage}
+                clearThumbnails = {this.clearThumbnails}
               />
             </div>
             <div className="right-container">
