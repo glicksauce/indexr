@@ -67,6 +67,7 @@ class TagSearch extends Component{
             <div className='tag-search'>
                 <h3>Tag Search</h3>
                 <h4>Tags Used:</h4>
+                <h6>select tag to add to 'AND' search</h6>
                 <div className="tags-used"></div>
             </div>
         )

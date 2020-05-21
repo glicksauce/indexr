@@ -29,6 +29,7 @@ code {
 } */
 
 .left-container {
+  min-width: 400px;
   width: 70%;
   max-width: 800px;
   float: left;
@@ -59,12 +60,13 @@ code {
 }
 
 .middle-container{
+  width: 300px;
   float: left;
   background: orange;
 }
 
 .right-container{
-  min-width: 250px;
+  width: 250px;
   background: green;
-  float: left;
+  float: right;
 }

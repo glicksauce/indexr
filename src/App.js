@@ -144,7 +144,8 @@ readFromLocalStorage = (tags, resultsQty) =>{
         if (tags == "") {
           this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)          
         } else if (imgObj.tags.length > 0) {
-            if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) {
+            //if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) { //'OR' SEARCH FUNCTION
+            if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION             
               this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
               console.log( typeof imgObj.tags, imgObj.tags, Array.isArray(imgObj.tags))
               //this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
