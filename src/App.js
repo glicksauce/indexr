@@ -5,6 +5,7 @@ import listReactFiles from 'list-react-files'
 import * as $ from 'jquery'
 import ThumbnailBrowswer from "./components/ThumbnailBrowser.js"
 import TagSearch from "./components/TagSearch.js"
+import Oauth from "./components/Oauth.js"
 import { getNodeText } from '@testing-library/react';
 require('isomorphic-fetch');
 
@@ -121,15 +122,16 @@ clearThumbnails = () =>{
 
 readFromLocalStorage = (tags, resultsQty) =>{
   let resultsCount = 0
-
     console.log("rendering " + tags)
     //default of results to return
     if (resultsQty == undefined){
-      resultsQty = 100
+      resultsQty = 5
     }
     // iterate localStorage
-    for (var i = 0; i < resultsQty; i++) {
-        
+    for (var i = 0; resultsCount < resultsQty && i<localStorage.length; i++) {
+        if (resultsCount >= resultsQty) {
+          break
+        }
         // set iteration key name
         var key = localStorage.key(i);
 
@@ -144,11 +146,14 @@ readFromLocalStorage = (tags, resultsQty) =>{
         //query based on tags 
         // tags param of "" indicates to search all tags
         if (tags == "") {
+          console.log("got in here")
           this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)   
           resultsCount += 1       
         } else if (imgObj.tags.length > 0) {
             //if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) { //'OR' SEARCH FUNCTION
-            if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION             
+            if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION    
+              console.log("got in this one")  
+              console.log(imgObj, tags)       
               this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
               resultsCount += 1
               //this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
@@ -200,7 +205,7 @@ getTagsFromLocalStorage = () =>{
 
 //render thumbnail image
 showThumbnailImage = (blobURL, id) =>{
-  let myImage = $('<img class="blob-created">')
+  let myImage = $('<img>')
   myImage
   .attr('src', blobURL)
   .attr('class', 'thumb-image')
@@ -296,6 +301,7 @@ tagsUpdate = (imageId, tags) => {
   }
 }
   componentDidMount() {
+    this.getDropboxUserName()
     $('.tags-main').change(this.handleChange)
     //this.loadFullImage()
     //testing localstorage
@@ -334,6 +340,8 @@ tagsUpdate = (imageId, tags) => {
         <div className="App">
           <header className="App-header">
             <h1>Welcome to indexr</h1>
+            <Oauth
+            />
           </header>
           <div className="container">
             <h3>select a thumbnail to preview and add tags</h3>

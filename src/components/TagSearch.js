@@ -39,6 +39,7 @@ class TagSearch extends Component{
         }
 
         this.props.clearThumbnails()
+        this.props.clearThumbnails()
         this.setState({
             selectedSearchTags: newSearchTags
         }, () =>{
