@@ -10,9 +10,10 @@ var Dropbox = require('dropbox').Dropbox;
 class Oauth extends Component{
 
     //credit to: https://github.com/dropbox/dropbox-sdk-js/blob/master/examples/javascript/utils.js
+    //takes urlparms in string form and returns object
     parseQueryString = (str) => {
             var ret = Object.create(null);
-            console.log("string is ", str, ret)
+            //console.log("string is ", str, ret)
             if (typeof str !== 'string') {
               return ret;
             }
@@ -48,14 +49,26 @@ class Oauth extends Component{
             
             return ret;
     }
+
+    setAccessTokenAsCookie = (token, expireDays) =>{
+      let defaultExpDays = expireDays || 7 //setting cookie to expire in 7 days
+      var expDate = new Date()
+      expDate.setTime(expDate.getTime() + (defaultExpDays*24*60*60*1000))
+      let expires = "expires="+expDate.toUTCString()
+      document.cookie = ('access_token=' + token + ';' + expires + ';')
+    }
     
 
     componentDidMount() {
+        //see if access token can be parsed from URL
         let urlAccessToken = this.parseQueryString(window.location.hash).access_token;
-
+        let authError = this.parseQueryString(window.location.hash).error
         console.log("Access Token is: ", urlAccessToken)
-        console.log(urlParams2)
+        console.log("access error is: " + authError)
 
+        if (urlAccessToken != undefined){
+          this.setAccessTokenAsCookie(urlAccessToken)
+        }
         // this.props.readFromLocalStorage("", 25)
     }
 
