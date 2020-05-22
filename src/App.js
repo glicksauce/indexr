@@ -10,7 +10,8 @@ import { getNodeText } from '@testing-library/react';
 require('isomorphic-fetch');
 
 
-let Token = process.env.REACT_APP_DBX_TOKEN
+//let Token = process.env.REACT_APP_DBX_TOKEN
+let sessionAccessToken;
 var Dropbox = require('dropbox').Dropbox;
 
 
@@ -24,12 +25,27 @@ state = {
 }
 
 //=========================
+//Get access token from cookies
+//=========================
+getTokenFromCookies = () =>{
+  let tempToken = decodeURIComponent(document.cookie)
+
+  let indexToken = tempToken.indexOf("access_token=")
+  sessionAccessToken = tempToken.substring(13)
+
+  console.log("temp token is: ", tempToken)
+  console.log("index of is: " + indexToken)
+  console.log("sessionAccessToken is: " + sessionAccessToken)
+  return true
+}
+
+//=========================
 //DROPBOX SDK FUNCTIONS
 //=========================
 
 //pass Token to get username
 getDropboxUserName = () => {
-  var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
+  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
   dbx.usersGetCurrentAccount()
     .then(function(response) {
       console.log(response);
@@ -41,7 +57,7 @@ getDropboxUserName = () => {
 
 //get list of contents including subfolders
 getDropboxFolderContents = () => {
-  var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
+  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
 dbx.filesListFolder({ path: "/camera uploads"})
 .then(function(response) {
   console.log(response);
@@ -53,7 +69,7 @@ dbx.filesListFolder({ path: "/camera uploads"})
 
 //get thumbnails per given path to file
 getDropboxThumbnails = (path, imageName) => {
-  var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
+  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
   dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w256h256", mode: "bestfit"})
   .then(response => {
   //console.log(response)
@@ -71,7 +87,7 @@ getDropboxThumbnails = (path, imageName) => {
 }
 
 getDropboxHighQualityThumb = async(path, imageName) => {
-  var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
+  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
   let answer = await dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w2048h1536", mode: "fitone_bestfit"})
   .then(response => {
     return response
@@ -85,7 +101,7 @@ getDropboxHighQualityThumb = async(path, imageName) => {
 
 //files search. can search ".jpg" for all jpg files. Seems to be a 100 result limit but there is a "more: true" and start: 101 result paassed:
 getDropboxFileSearch = () => {
-  var dbx = new Dropbox({ accessToken: Token, fetch: fetch });
+  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
   dbx.filesSearch({ path: "", query: ".jpg", start: 2001})
   .then((response) => {
         response.matches.forEach((item,index) => {
@@ -341,6 +357,7 @@ tagsUpdate = (imageId, tags) => {
           <header className="App-header">
             <h1>Welcome to indexr</h1>
             <Oauth
+              getTokenFromCookies = {this.getTokenFromCookies}
             />
           </header>
           <div className="container">
