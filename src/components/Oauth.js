@@ -58,6 +58,37 @@ class Oauth extends Component{
       document.cookie = ('access_token=' + token + ';' + expires + ';')
     }
 
+    checkIfUserExists = (dbx_id) =>{
+      let BaseURL = process.env.REACT_APP_BACKEND
+
+        //format params as object
+        let getParams = {
+          'dbx_id': dbx_id,
+        }
+
+        let userCheck = fetch(BaseURL + 'users/' + dbx_id,{
+          //body: JSON.stringify(getParams),
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => (res.json()))
+        .then(data => {
+          //console.log(data)
+          if (data.length > 0) {
+            return data
+          } else {
+            return false
+          }
+        })
+        // .then(() => console.log(obj))
+        .catch(error => console.log(error))
+
+        return userCheck
+    }
+
     createUser = (dbx_id, access_token) =>{
         //event.preventDefault()
         let BaseURL = process.env.REACT_APP_BACKEND
@@ -101,8 +132,18 @@ class Oauth extends Component{
         let isAccessToken = this.props.getTokenFromCookies()
 
         if (isAccessToken) {
-          this.createUser(urlAccountId, urlAccessToken)
-          this.props.getDropboxFileSearch(0, 'all', 1)
+        this.checkIfUserExists(urlAccountId)
+        .then(res => {
+            console.log(res)
+
+            //if user does not exist, then create user on backend
+            if (!res){
+              this.createUser(urlAccountId, urlAccessToken)
+            }
+          })
+
+          
+    this.props.getDropboxFileSearch(0, 'all', 1)
         }
         // this.props.readFromLocalStorage("", 25)
     }
