@@ -63,14 +63,19 @@ class Oauth extends Component{
         //see if access token can be parsed from URL
         let urlAccessToken = this.parseQueryString(window.location.hash).access_token;
         let authError = this.parseQueryString(window.location.hash).error
-        console.log("Access Token is: ", urlAccessToken)
-        console.log("access error is: " + authError)
+        // console.log("Access Token is: ", urlAccessToken)
+        // console.log("access error is: " + authError)
 
         if (urlAccessToken != undefined){
           this.setAccessTokenAsCookie(urlAccessToken)
         }
 
-        this.props.getTokenFromCookies()
+        //loads access token as global variable
+        let isAccessToken = this.props.getTokenFromCookies()
+
+        if (isAccessToken) {
+          this.props.getDropboxFileSearch(0, 'all', 10)
+        }
         // this.props.readFromLocalStorage("", 25)
     }
 
@@ -85,7 +90,7 @@ class Oauth extends Component{
 
         console.log(dbxLinkURL)
         window.location = dbxLinkURL
-        }
+    }
 
     
     render () {

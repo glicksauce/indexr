@@ -100,22 +100,64 @@ getDropboxHighQualityThumb = async(path, imageName) => {
 }
 
 //files search. can search ".jpg" for all jpg files. Seems to be a 100 result limit but there is a "more: true" and start: 101 result paassed:
-getDropboxFileSearch = () => {
-  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
-  dbx.filesSearch({ path: "", query: ".jpg", start: 2001})
-  .then((response) => {
-        response.matches.forEach((item,index) => {
-            if (item.match_type['.tag'] == "filename") {
-              console.log(item)
-              this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
-              //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
-            }
+getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
+  
+  //initialize startIndex if not in params
+  if (typeof startIndex != 'number'){
+    startIndex = 0
+  }
+  //initialize isMore - whether or not there are more results to search
+  let isMore = false
+  
+  //initialize filetypes for search param "all" indicates to use all of these extenesions in search
+  if (typeof imgQuery == undefined || imgQuery == "all") {
+    imgQuery = ['.jpg', '.png', '.gif', '.tiff', '.jpeg', '.bmp']
+  }
+
+  if (typeof imgQuery == 'string'){
+    imgQuery = imgQuery.split()
+  }
+
+  imgQuery.forEach(imgExt => {
+      var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
+      dbx.filesSearch({ path: "", query: imgExt, start: startIndex})
+        .then((response) => {
+              response.matches.forEach((item,index) => {
+                  if (item.match_type['.tag'] == "filename") {
+                    //console.log(item)
+                    this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
+                    //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
+                  }
+                  
+                  console.log(response.more, response.start)
+              })
+              
+            //console.log(response);
+            isMore = response.more
+            startIndex = response.start
+            console.log("imgExt, response.more, response.start:", imgExt, response.more, response.start)
         })
-    //console.log(response);
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
+        .then((iterate) =>{
+            //recursive run this again if there are more responses to process
+              console.log("in iterate section, ismore and startindex: and iterations ", isMore, startIndex, iterations)
+              if (isMore == true) {
+                console.log(typeof iterations == 'number')
+                  if (typeof iterations == 'number') {
+                    iterations -= 1
+                      if (iterations > 0){
+                        console.log("again!")
+                        this.getDropboxFileSearch(startIndex, imgExt.split(), iterations)
+                      }
+                  } else {
+                    this.getDropboxFileSearch(startIndex, imgExt.split())
+                  }
+              }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    })
+ 
 }
 
 //=========================
@@ -358,6 +400,7 @@ tagsUpdate = (imageId, tags) => {
             <h1>Welcome to indexr</h1>
             <Oauth
               getTokenFromCookies = {this.getTokenFromCookies}
+              getDropboxFileSearch = {this.getDropboxFileSearch}
             />
           </header>
           <div className="container">

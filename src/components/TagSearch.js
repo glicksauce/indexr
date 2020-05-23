@@ -85,7 +85,7 @@ class TagSearch extends Component{
         console.log("tags are : ", typeof tags)
 
         Object.keys(tags).forEach((key) => {
-            console.log(key)
+            //console.log(key)
             let $tag = $('<h5>')
                 .text(key + " (" + tags[key] + ")")
                 .attr("id", key)
