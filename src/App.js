@@ -114,10 +114,12 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
     imgQuery = ['.jpg', '.png', '.gif', '.tiff', '.jpeg', '.bmp']
   }
 
+  //if imgQuery param comes in as string, try to convert it to array for upcoming 'foreach' statement
   if (typeof imgQuery == 'string'){
     imgQuery = imgQuery.split()
   }
 
+  //iterate through each img ext to query
   imgQuery.forEach(imgExt => {
       var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
       dbx.filesSearch({ path: "", query: imgExt, start: startIndex})
@@ -141,11 +143,9 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
             //recursive run this again if there are more responses to process
               console.log("in iterate section, ismore and startindex: and iterations ", isMore, startIndex, iterations)
               if (isMore == true) {
-                console.log(typeof iterations == 'number')
                   if (typeof iterations == 'number') {
                     iterations -= 1
                       if (iterations > 0){
-                        console.log("again!")
                         this.getDropboxFileSearch(startIndex, imgExt.split(), iterations)
                       }
                   } else {
@@ -157,7 +157,6 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
           console.log(error);
         });
     })
- 
 }
 
 //=========================
@@ -324,14 +323,19 @@ loadFullImage = async(localStorageObj) =>{
   'class': 'full-image',
   'data-id': imageMain.id
   })
-  $('.left-container-image-container').prepend(myImage)
-
+  
+  //get tags from obj and pass to input field
   $('.tags-main').val(Object.values(localStorageObj.tags).join(' '))
 
+  //get image path from obj and pass to field
   $('.image-path').val(localStorageObj.imagePath)
 
+  //get image date from obj and pass to field
   $('.image-date').val(localStorageObj.client_modified_date)
 
+  //add handle change so tag gets updated when changed
+  myImage.change(this.handleChange)
+  $('.left-container-image-container').prepend(myImage)
 }
 
 //=========================

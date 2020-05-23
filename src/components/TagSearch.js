@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as $ from 'jquery'
 require('isomorphic-fetch')
 
-let Token = process.env.REACT_APP_DBX_TOKEN
+//let Token = process.env.REACT_APP_DBX_TOKEN
 var Dropbox = require('dropbox').Dropbox;
 
 
@@ -18,10 +18,12 @@ class TagSearch extends Component{
         console.log("tag is ", tag, " " + typeof tag)
         //console.log(event.target.id)
         //console.log(isCustomTagSearch)
+
         //set search tags to whatever is in state and then find our new tag element in array
         let newSearchTags = Object.values(this.state.selectedSearchTags)
         let parseSearchTag = newSearchTags.indexOf(tag)
 
+        //if tag is found in state than remove that tag from state aka toggle it
         if (parseSearchTag != -1){ //toggle off
             //console.log(Object.values(this.state.selectedSearchTags))
             //console.log(parseSearchTag)
@@ -39,7 +41,8 @@ class TagSearch extends Component{
         }
 
         this.props.clearThumbnails()
-        this.props.clearThumbnails()
+
+        //set State, THEN call function to search and render tags
         this.setState({
             selectedSearchTags: newSearchTags
         }, () =>{

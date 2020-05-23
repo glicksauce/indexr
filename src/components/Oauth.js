@@ -57,12 +57,39 @@ class Oauth extends Component{
       let expires = "expires="+expDate.toUTCString()
       document.cookie = ('access_token=' + token + ';' + expires + ';')
     }
+
+    createUser = (dbx_id, access_token) =>{
+        //event.preventDefault()
+        let BaseURL = process.env.REACT_APP_BACKEND
+
+        //format params as object
+        let postParams = {
+          'dbx_id': dbx_id,
+          'last_access_token': access_token
+        }
+
+        fetch(BaseURL + 'users',{
+          body: JSON.stringify(postParams),
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => (res.json()))
+        .then(data => console.log(data))
+        // .then(() => console.log(obj))
+        .catch(error => console.log(error))
+      
+    }
     
 
     componentDidMount() {
         //see if access token can be parsed from URL
         let urlAccessToken = this.parseQueryString(window.location.hash).access_token;
+        let urlAccountId = this.parseQueryString(window.location.hash).account_id
         let authError = this.parseQueryString(window.location.hash).error
+        // console.log("URL params are: ",this.parseQueryString(window.location.hash)) 
         // console.log("Access Token is: ", urlAccessToken)
         // console.log("access error is: " + authError)
 
@@ -74,7 +101,8 @@ class Oauth extends Component{
         let isAccessToken = this.props.getTokenFromCookies()
 
         if (isAccessToken) {
-          this.props.getDropboxFileSearch(0, 'all', 10)
+          this.createUser(urlAccountId, urlAccessToken)
+          this.props.getDropboxFileSearch(0, 'all', 1)
         }
         // this.props.readFromLocalStorage("", 25)
     }

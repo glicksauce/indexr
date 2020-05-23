@@ -10,7 +10,7 @@ var Dropbox = require('dropbox').Dropbox;
 class ThumbnailBrowser extends Component{
 
     componentDidMount() {
-        // this.props.readFromLocalStorage("", 25)
+         this.props.readFromLocalStorage("", 25)
     }
     render () {
         return(
