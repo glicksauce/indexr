@@ -143,7 +143,7 @@ class Oauth extends Component{
           })
 
         //add pull images from dropbox
-        this.props.getDropboxFileSearch(0, 'all', 1)
+        //this.props.getDropboxFileSearch(0, 'all', 1)
         }
 
     }
