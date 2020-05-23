@@ -46,13 +46,15 @@ getTokenFromCookies = () =>{
 //pass Token to get username
 getDropboxUserName = () => {
   var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
-  dbx.usersGetCurrentAccount()
+  let dbxAccount = dbx.usersGetCurrentAccount()
     .then(function(response) {
       console.log(response);
+      return response
     })
     .catch(function(error) {
       console.log(error);
     });
+    return dbxAccount
 }
 
 //get list of contents including subfolders
@@ -128,6 +130,7 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
                   if (item.match_type['.tag'] == "filename") {
                     //console.log(item)
                     this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
+                    this.putInDatabase(sessionAccessToken, item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
                     //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
                   }
                   
@@ -172,6 +175,49 @@ putInLocalStorage = (imagePath, imageName, imageId, client_modified_date, tags) 
 
   }))
 }
+
+putInDatabase = (sessionAccessToken, imagePath, imageName, imageId, client_modified_date, tags) =>{
+
+  //localStorage.setItem(imageId, JSON.stringify({
+    let BaseURL = process.env.REACT_APP_BACKEND
+    let dropboxUserId
+
+
+        const postImg = () =>{
+
+        //format params as object
+          let postParams = {
+            'dbx_user_id': dropboxUserId,
+            'image_id': imageId,
+            'image_path': imagePath,
+            'image_name': imageName,
+            'client_modified_date': client_modified_date,
+            'tags': tags || ''
+          }
+
+          fetch(BaseURL + 'users/' + dropboxUserId + "/albums/",{
+            body: JSON.stringify(postParams),
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json, text/plain, */*',
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(res => (res.json()))
+          .then(data => console.log(data))
+          // .then(() => console.log(obj))
+          .catch(error => console.log(error))
+        }
+
+        this.getDropboxUserName()
+        .then(res =>{
+          dropboxUserId = res.account_id
+          //console.log("dbx id is: ", dropboxUserId)
+          postImg()
+        })
+
+  }
+
 
 clearThumbnails = () =>{
   $('.thumb-image').remove()

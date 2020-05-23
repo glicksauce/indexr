@@ -142,10 +142,10 @@ class Oauth extends Component{
             }
           })
 
-          
-    this.props.getDropboxFileSearch(0, 'all', 1)
+        //add pull images from dropbox
+        this.props.getDropboxFileSearch(0, 'all', 1)
         }
-        // this.props.readFromLocalStorage("", 25)
+
     }
 
     dropboxAuthenticate = () =>{
