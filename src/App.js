@@ -271,17 +271,18 @@ readFromLocalStorage = (tags, resultsQty) =>{
         
 }
 
-// readFromDatabase = (tags, resultsQty) =>{
+readFromDatabase = (tags, maxResultsQty) =>{
+  let BaseURL = process.env.REACT_APP_BACKEND
 //   let resultsCount = 0
 //     console.log("rendering " + tags)
 
 //     //default of results to return
 //     if (resultsQty == undefined){
-//       resultsQty = 5
+//       maxResultsQty = 5
 //     }
 //     // iterate dbcount
-//     for (var i = 0; resultsCount < resultsQty && i<localStorage.length; i++) {
-//         if (resultsCount >= resultsQty) {
+//     for (var i = 0; resultsCount < maxResultsQty; i++) {
+//         if (resultsCount >= maxResultsQty) {
 //           break
 //         }
 //         // set iteration key name
@@ -295,6 +296,36 @@ readFromLocalStorage = (tags, resultsQty) =>{
 //         //console.log(imgObj)
 //         //console.log('Key: ' + key + ', Value: ' + value);  
 
+            const patchImg = () =>{
+
+              //format params as object
+                let postParams = {
+                  // 'dbx_user_id': dropboxUserId,
+                  // 'image_id': imageId,
+                  'tags': tags
+                }
+                console.log(JSON.stringify(postParams))
+                fetch(BaseURL + 'users/' + dropboxUserId + "/albums/tagsearch/album/" +tags,{
+                  body: JSON.stringify(postParams),
+                  method: 'GET',
+                  headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                  }
+                })
+                .then(res => (res.json()))
+                .then(data => console.log(data))
+                // .then(() => console.log(obj))
+                .catch(error => console.log(error))
+              }
+
+              this.getDropboxUserName()
+              .then(res =>{
+                dropboxUserId = res.account_id
+                //console.log("dbx id is: ", dropboxUserId)
+                patchImg()
+              })
+//         let imgOb = fetch 
 //         //query based on tags 
 //         // tags param of "" indicates to search all tags
 //         if (tags == "") {
@@ -318,7 +349,7 @@ readFromLocalStorage = (tags, resultsQty) =>{
 //     let totalImages = localStorage.length
 //     $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
         
-// }
+}
 
 getTagsFromLocalStorage = () =>{
   let tagsObj = {}
@@ -429,7 +460,7 @@ loadFullImage = async(localStorageObj) =>{
   $('.image-date').val(localStorageObj.client_modified_date)
 
   //add handle change so tag gets updated when changed
-  myImage.change(this.handleChange)
+  //myImage.change(this.handleChange)
   $('.left-container-image-container').prepend(myImage)
 }
 
@@ -455,6 +486,10 @@ tagsUpdate = (imageId, tags) => {
     //console.log(tagsArray)
     localStorageObj.tags = tagsArray
     localStorage.setItem(imageId, JSON.stringify(localStorageObj))
+
+    //adding tags to image in database
+    console.log("adding to db: ", imageId, tags)
+    this.updateTagsInDatabase(imageId, tags.split(" "))
   }
 }
 
@@ -497,7 +532,7 @@ updateTagsInDatabase = (imageId, tags) =>{
 }
 
   componentDidMount() {
-    this.updateTagsInDatabase('id:Jo_ZZoosmRAAAAAAAAAAFw', ['fun','run'])
+    //this.updateTagsInDatabase('id:Jo_ZZoosmRAAAAAAAAAAFw', ['fun','run'])
     this.getDropboxUserName()
     $('.tags-main').change(this.handleChange)
 
