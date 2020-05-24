@@ -91,7 +91,7 @@ getDropboxThumbnails = (path, imageName) => {
   })
 
   //render thumbnail
-  this.showThumbnailImage(imageBlobURL, response.id)
+  // this.showThumbnailImage(imageBlobURL, response.id)
   //console.log(response.fileBlob);
   })
   //.then(img => this.blobToFile(img.fileBlob, "image1"))
@@ -235,13 +235,21 @@ clearThumbnails = () =>{
   $('.thumb-image').remove()
 }
 
+clearImagesFromState = () =>{
+  this.setState({
+    thumbnailArray: []
+  })
+}
+
 readFromLocalStorage = (tags, resultsQty) =>{
   let resultsCount = 0
     console.log("rendering " + tags)
+
     //default of results to return
     if (resultsQty == undefined){
-      resultsQty = 5
+      resultsQty = 25
     }
+
     // iterate localStorage
     for (var i = 0; resultsCount < resultsQty && i<localStorage.length; i++) {
         if (resultsCount >= resultsQty) {
@@ -266,9 +274,8 @@ readFromLocalStorage = (tags, resultsQty) =>{
           resultsCount += 1       
         } else if (imgObj.tags.length > 0) {
             //if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) { //'OR' SEARCH FUNCTION
-            if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION    
-              console.log("got in this one")  
-              console.log(imgObj, tags)       
+            if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION     
+              console.log("tag search in localstorage found tags: " + tags + " inside imgObj: " + imgObj.tags)       
               this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
               resultsCount += 1
               //this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
@@ -391,18 +398,18 @@ getTagsFromLocalStorage = () =>{
 //BLOB AND IMAGE RENDERING
 //=========================
 
-//render thumbnail image
-showThumbnailImage = (blobURL, id) =>{
-  let myImage = $('<img>')
-  myImage
-  .attr('src', blobURL)
-  .attr('class', 'thumb-image')
-  .attr('id', id)
-  $('.thumb-browser').append(myImage)
+// //render thumbnail image
+// showThumbnailImage = (blobURL, id) =>{
+//   let myImage = $('<img>')
+//   myImage
+//   .attr('src', blobURL)
+//   .attr('class', 'thumb-image')
+//   .attr('id', id)
+//   $('.thumb-browser').append(myImage)
 
-  //add event for when clicked
-  myImage.click(() => this.thumbnailOnClick(id))
-}
+//   //add event for when clicked
+//   myImage.click(() => this.thumbnailOnClick(id))
+// }
 
 //takes a blob and renders image 
 blobToFile = (theBlob, fileName, imageId) => {
@@ -542,6 +549,7 @@ updateTagsInDatabase = (imageId, tags) =>{
 }
 
   componentDidMount() {
+    //  this.readFromLocalStorage("",25)
     //this.updateTagsInDatabase('id:Jo_ZZoosmRAAAAAAAAAAFw', ['fun','run'])
     this.getDropboxUserName()
     $('.tags-main').change(this.handleChange)
@@ -560,6 +568,7 @@ updateTagsInDatabase = (imageId, tags) =>{
           <div className="container">
             <h3>select a thumbnail to preview and add tags</h3>
             <div className="left-container">
+              <a id="main_img_anchor"></a>
               <div className="left-container-image-container">
                 
               </div>
@@ -585,12 +594,15 @@ updateTagsInDatabase = (imageId, tags) =>{
                 readFromLocalStorage = {this.readFromLocalStorage}
                 readFromDatabase = {this.readFromDatabase}
                 clearThumbnails = {this.clearThumbnails}
+                clearImagesFromState = {this.clearImagesFromState}
               />
             </div>
             <div className="right-container">
               <ThumbnailBrowswer 
               readFromLocalStorage = {this.readFromLocalStorage}
-              thumbnailArray = {this.thumbnailArray}
+              thumbnailArray = {this.state.thumbnailArray}
+              onClick = {this.thumbnailOnClick}
+              clearImagesFromState = {this.clearImagesFromState}
               />
             </div>
             {/* <input type="file"></input>

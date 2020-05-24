@@ -10,26 +10,29 @@ var Dropbox = require('dropbox').Dropbox;
 class ThumbnailBrowser extends Component{
 
     componentDidMount() {
-        //  this.props.readFromLocalStorage("", 25)
+        //  this.props.clearImagesFromState //need to reset images in state before adding more to
+         // this.props.readFromLocalStorage("", 25)
     }
 
     render () {
         
         return (
-            <>
-            {this.props.thumbnailArray ? 
-                // <h3 className="thumbnail-heading">Browse Thumbnails</h3>
-                this.props.thumbnailArray.map(thumbnail =>
-                <div key={thumbnail.imageId}>
-                    <img src={thumbnail.imageBlobUrl}></img>
-                </div>
-                )
-            :
+
             <div className='thumb-browser'>
-                <h3 className="thumbnail-heading">Browse Thumbnails</h3>
+                    <h3 className="thumbnail-heading">Browse Thumbnails</h3>
+            {this.props.thumbnailArray ? 
+                this.props.thumbnailArray.map(thumbnail =>
+                <a key={thumbnail.imageId} href="#page_header">
+                    <div 
+                        className="thumb-image"
+                        onClick={() => this.props.onClick(thumbnail.imageId)}
+                    >
+                        <img src={thumbnail.imageBlobUrl}></img>
+                    </div>
+                </a>
+                )
+            : null }
             </div>
-            }
-            </>   
         )
     }
     

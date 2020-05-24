@@ -40,15 +40,17 @@ class TagSearch extends Component{
             newSearchTags.push(tag)
         }
 
-        this.props.clearThumbnails()
+        //this.props.clearThumbnails()
+        this.props.clearImagesFromState()
 
         //set State, THEN call function to search and render tags
         this.setState({
             selectedSearchTags: newSearchTags
         }, () =>{
             if (!bypassImageRender) {
-                this.props.readFromLocalStorage(newSearchTags)
-                this.props.readFromDatabase(newSearchTags)
+                console.log("reading from local storage with tags: " + this.state.selectedSearchTags)
+                this.props.readFromLocalStorage(this.state.selectedSearchTags)
+                // this.props.readFromDatabase(this.state.selectedSearchTags)
             } else {
                 console.log("bypassed!")
             }
@@ -58,24 +60,23 @@ class TagSearch extends Component{
     }
 
     customTagOnChange = (event) =>{
-        let existingValue = event.target.id.split(" ")
-        existingValue.forEach((value,index) => {
-            if (value != ""){
-                if (index == existingValue.length -1){ //bypass render images unless on last loop through
-                    this.tagOnClick(value, true)
-                } else{
-                    this.tagOnClick(value, true, true)
-                }
-            }   
-
-        })
-        
         event.target.id = event.target.value
 
+        this.setState({
+            selectedSearchTags: []
+        })
+
+        //if custom box is cleared out return everything
+        if (event.target.id == ''){
+            this.tagOnClick('', true)
+        }
+
         let newValue = event.target.id.split(" ")
+
+
         newValue.forEach((value,index) => {
             if (value != ""){
-                if (index == existingValue.length -1){ //bypass render images unless on last loop through
+                if (index == newValue.length -1){ //bypass render images unless on last loop through
                     this.tagOnClick(value, true)
                 } else{
                     this.tagOnClick(value, true, true)
@@ -117,7 +118,6 @@ class TagSearch extends Component{
             
             <div className='tag-search'>
                 <h3>Tag Search</h3>
-                <h4>Tags Used:</h4>
                 <h6>select tag to add to 'AND' search</h6>
                 <div className="tags-used"></div>
             </div>

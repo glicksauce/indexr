@@ -176,7 +176,9 @@ class Oauth extends Component{
     render () {
         return(
           <header className="App-header">
-            <h1>Welcome to indexr</h1>
+            <a id="page_header"></a>
+            <h1>indexr</h1>
+            <h4>a better way to tag and view your images</h4>
             <div className='auth-window'>
               <div className='not-authorized'>
                 <p>Please connect to Dropbox to begin tagging photos</p>

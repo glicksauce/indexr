@@ -1,3 +1,56 @@
+// new custom tag on change:
+// customTagOnChange = (event) =>{
+//   event.target.id = event.target.value
+
+//   //if custom tag box is cleared reset tags state to null
+//   if (event.target.id == '') {
+//       this.setState({
+//           selectedSearchTags: []
+//       })
+//   }
+
+//   let newValue = event.target.id.split(" ")
+//   newValue.forEach((value,index) => {
+//       if (value != ""){
+//           if (index == newValue.length -1){ //bypass render images unless on last loop through
+//               this.tagOnClick(value, true)
+//           } else{
+//               this.tagOnClick(value, true, true)
+//           }
+//       }   
+
+//   })
+// }
+
+// old customtagonchange:
+// customTagOnChange = (event) =>{
+//   let existingValue = event.target.id.split(" ")
+//   existingValue.forEach((value,index) => {
+//       if (value != ""){
+//           if (index == existingValue.length -1){ //bypass render images unless on last loop through
+//               this.tagOnClick(value, true)
+//           } else{
+//               this.tagOnClick(value, true, true)
+//           }
+//       }   
+
+//   })
+  
+//   event.target.id = event.target.value
+
+//   let newValue = event.target.id.split(" ")
+//   newValue.forEach((value,index) => {
+//       if (value != ""){
+//           if (index == existingValue.length -1){ //bypass render images unless on last loop through
+//               this.tagOnClick(value, true)
+//           } else{
+//               this.tagOnClick(value, true, true)
+//           }
+//       }   
+
+//   })
+// }
+
 
 //testing stuff goes here:
     //this.loadFullImage()
