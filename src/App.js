@@ -21,7 +21,8 @@ class App extends Component {
 //=========================
 state = {
   tagsObj: {}, //array of tags in use
-  selectedSearchTags: [] //search terms selected
+  selectedSearchTags: [], //search terms selected
+  thumbnailArray: []
 }
 
 //=========================
@@ -77,6 +78,17 @@ getDropboxThumbnails = (path, imageName) => {
   //console.log(response)
   //get the image BlobURL of the image
   let imageBlobURL = this.blobToFile(response.fileBlob, imageName, response.id)
+
+  //add to state
+  const tempThumbnailArray = [...this.state.thumbnailArray]
+  tempThumbnailArray.push({
+    'imageName': imageName, 
+    'imageBlobUrl': imageBlobURL,
+    'imageId': response.id
+  })
+  this.setState({
+    thumbnailArray: tempThumbnailArray
+  })
 
   //render thumbnail
   this.showThumbnailImage(imageBlobURL, response.id)
@@ -273,6 +285,7 @@ readFromLocalStorage = (tags, resultsQty) =>{
 
 readFromDatabase = (tags, maxResultsQty) =>{
   let BaseURL = process.env.REACT_APP_BACKEND
+  let dropboxUserId
 //   let resultsCount = 0
 //     console.log("rendering " + tags)
 
@@ -297,16 +310,8 @@ readFromDatabase = (tags, maxResultsQty) =>{
 //         //console.log('Key: ' + key + ', Value: ' + value);  
 
             const patchImg = () =>{
-
-              //format params as object
-                let postParams = {
-                  // 'dbx_user_id': dropboxUserId,
-                  // 'image_id': imageId,
-                  'tags': tags
-                }
-                console.log(JSON.stringify(postParams))
-                fetch(BaseURL + 'users/' + dropboxUserId + "/albums/tagsearch/album/" +tags,{
-                  body: JSON.stringify(postParams),
+                console.log("db tags params are: ", tags)
+                fetch(BaseURL + 'users/' + dropboxUserId + "/tagsearch/" +tags,{
                   method: 'GET',
                   headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -398,6 +403,7 @@ showThumbnailImage = (blobURL, id) =>{
   //add event for when clicked
   myImage.click(() => this.thumbnailOnClick(id))
 }
+
 //takes a blob and renders image 
 blobToFile = (theBlob, fileName, imageId) => {
   //A Blob() is almost a File() - it's just missing the two properties below which we will add
@@ -415,6 +421,10 @@ blobToFile = (theBlob, fileName, imageId) => {
   return objectURL
 }
 
+showContainer = () =>{
+  console.log("showing container")
+  $('.container').fadeIn(3)
+}
 //=========================
 //MOUSE FUNCTIONS
 //=========================
@@ -541,38 +551,46 @@ updateTagsInDatabase = (imageId, tags) =>{
   render () {
     return (
         <div className="App">
-          <header className="App-header">
-            <h1>Welcome to indexr</h1>
             <Oauth
               getTokenFromCookies = {this.getTokenFromCookies}
               getDropboxFileSearch = {this.getDropboxFileSearch}
+              getDropboxUserName = {this.getDropboxUserName}
+              showContainer = {this.showContainer}
             />
-          </header>
           <div className="container">
             <h3>select a thumbnail to preview and add tags</h3>
             <div className="left-container">
               <div className="left-container-image-container">
-                <div className="tag-section">
-                  <h3>tags</h3>
-                  <input className="tags-main" placeholder="tags go here" type="text"></input>
-                  <h3 className="line-2">image path</h3>
-                  <input className="no-edit image-path"></input>
-                  <h3 className="line-3">date</h3>
-                  <input className="no-edit image-date"></input>
-                </div>
+                
               </div>
+              <div className="tag-section">
+                  <div className="line line-1">
+                    <h3 className="label">tags:</h3>
+                    <input className="tags-main" placeholder="tags go here" type="text"></input>
+                  </div>
+                  <div className="line line-2">
+                    <h3 className="label">image path:</h3>
+                    <input className="no-edit image-path" readOnly="readonly"></input>
+                  </div>
+                  <div className="line line-3">
+                    <h3 className="label">date:</h3>
+                    <input className="no-edit image-date" readOnly="readonly"></input>
+                  </div>
+                </div>
             </div>
             <div className="middle-container">
               <TagSearch
                 tagsObj = {this.state.tagsObj}
                 getTagsFromLocalStorage = {this.getTagsFromLocalStorage}
                 readFromLocalStorage = {this.readFromLocalStorage}
+                readFromDatabase = {this.readFromDatabase}
                 clearThumbnails = {this.clearThumbnails}
               />
             </div>
             <div className="right-container">
               <ThumbnailBrowswer 
               readFromLocalStorage = {this.readFromLocalStorage}
+              thumbnailArray = {this.thumbnailArray}
               />
             </div>
             {/* <input type="file"></input>

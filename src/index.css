@@ -31,9 +31,8 @@ code {
 .left-container {
   min-width: 400px;
   width: 70%;
-  max-width: 800px;
+  max-width: 1000px;
   float: left;
-  /* background: red; */
 }
 
 .full-image{
@@ -42,13 +41,43 @@ code {
 
 .left-container-image-container{
   margin: 0 auto;
+  width: 90%;
+  height: 60vh;
 }
 
-.line-2, .line-3{
+.left-container-image-container img {
+  width: auto;
+  height: auto;
+  max-height: 60vh;
+  max-width: 100%;
+}
+
+.label{
+  text-align: right;
+  font-size: 15px;
+  width: 125px;
+}
+
+.tags-main{
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  color: rgb(35, 73, 51);
+  width: 400px;
+  height: 20px;
+}
+
+.line{
+  height: 40px;
+}
+
+ .line-2, .line-3{
+   height: 35px;
   clear:both;
 }
 .no-edit{
-  
+  color: rgb(83, 69, 69);
+  border: none;
+  width: 600px;
 }
 .tag-section{
   margin: 5px 15px;
@@ -59,14 +88,36 @@ code {
   float: left;
 }
 
+.container{
+  display: none;
+}
+
+
+/* Middle container section ----------------------------------------- */
 .middle-container{
   width: 300px;
   float: left;
-  background: orange;
+  background: rgba(192, 152, 77, 0.4);
 }
 
+.tag-search{
+  margin: 0 10px;
+}
+.custom-tag-input{
+  height: 20px;
+  text-align: center; 
+  font-weight: bold;
+  color: rgb(29, 49, 29);
+}
+/* 
+Right container section ----------------------------------------------- */
 .right-container{
   width: 350px;
   /* background: green; */
   float: right;
+}
+
+.thumb-image{
+  height: 144px;
+  width: auto;
 }

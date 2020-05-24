@@ -65,7 +65,7 @@ class Oauth extends Component{
         let getParams = {
           'dbx_id': dbx_id,
         }
-
+        console.log("checking if dbx id: " + dbx_id + " is in db")
         let userCheck = fetch(BaseURL + 'users/' + dbx_id,{
           //body: JSON.stringify(getParams),
           method: 'GET',
@@ -76,8 +76,8 @@ class Oauth extends Component{
         })
         .then(res => (res.json()))
         .then(data => {
-          //console.log(data)
-          if (data.length > 0) {
+          console.log(data)
+          if (data.dbx_id == dbx_id) {
             return data
           } else {
             return false
@@ -132,18 +132,29 @@ class Oauth extends Component{
         let isAccessToken = this.props.getTokenFromCookies()
 
         if (isAccessToken) {
-        this.checkIfUserExists(urlAccountId)
-        .then(res => {
-            console.log(res)
+          this.checkIfUserExists(urlAccountId)
+          .then(res => {
+              console.log("user is: ", res)
 
-            //if user does not exist, then create user on backend
-            if (!res){
-              this.createUser(urlAccountId, urlAccessToken)
-            }
+              //if user does not exist, then create user on backend
+              if (!res){
+                this.createUser(urlAccountId, urlAccessToken)
+              }
+            })
+
+          //set username, hide Dropbox connect, show main section
+          this.props.getDropboxUserName()
+          .then(res =>{
+              if (res) {
+                let welcomeString = "Welcome " + res.name.familiar_name
+                $('.authorized').append('<h2>').text(welcomeString)
+                $('.not-authorized').hide()
+                this.props.showContainer()
+              }
           })
-
-        //add pull images from dropbox
-        //this.props.getDropboxFileSearch(0, 'all', 1)
+          
+          //add pull images from dropbox
+          //this.props.getDropboxFileSearch(0, 'all', 1)
         }
 
     }
@@ -164,19 +175,25 @@ class Oauth extends Component{
     
     render () {
         return(
-            
+          <header className="App-header">
+            <h1>Welcome to indexr</h1>
             <div className='auth-window'>
-                <input
-                    type="submit"
-                    value="connect"
-                    onClick={this.dropboxAuthenticate}
-                />
+              <div className='not-authorized'>
+                <p>Please connect to Dropbox to begin tagging photos</p>
+                  <input
+                      type="submit"
+                      value="connect"
+                      onClick={this.dropboxAuthenticate}
+                  />
 
-                <div id="pre-auth-section">
-                    <a href="" id="authlink" className="button"></a>
-                </div>
-                
+                  <div id="pre-auth-section">
+                      <a href="" id="authlink" className="button"></a>
+                  </div>
+              </div>
+              <div className='authorized'>
+              </div>
             </div>
+          </header>
         )
     }
     

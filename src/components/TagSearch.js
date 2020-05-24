@@ -48,6 +48,7 @@ class TagSearch extends Component{
         }, () =>{
             if (!bypassImageRender) {
                 this.props.readFromLocalStorage(newSearchTags)
+                this.props.readFromDatabase(newSearchTags)
             } else {
                 console.log("bypassed!")
             }
