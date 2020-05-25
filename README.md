@@ -2,6 +2,15 @@
 
 ### An advanced image viewing app that allows user to custom tag their locally stored images. User can search by tags (or exclude by tag) to quickly find the image they were thinking of.
 
+## Links  
+### Backend
+Github: https://github.com/glicksauce/indexr_api  
+Hosted API DB: https://indexr-api.herokuapp.com/
+
+### Frontend
+Github: https://github.com/glicksauce/indexr  
+App: https://indexr-client.herokuapp.com/
+
 ## Technologies Used
 
 ### 
