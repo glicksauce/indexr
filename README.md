@@ -38,7 +38,8 @@ Javascript (localstorage)
  * ### Using OAuth 2.0 to authenticate user's to their Dropbox account:
 Dropbox had a good explanation of how their Oauth functions work:
 https://www.dropbox.com/developers/reference/oauth-guide  
-![](/blob/master/public/oauth2-web-diagram.png)
+
+![oauth](https://github.com/glicksauce/indexr/blob/master/public/oauth2-web-diagram.png)
 
 1) Connect button is pressed. This redirects user to Dropbox login and includes my app's key as a parameter
 2) User logs into Dropbox and grants access to integrate with my app
