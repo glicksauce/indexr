@@ -29,6 +29,10 @@ header section ------------------------------- */
   text-transform: uppercase;
 }
 
+.App-header h4 {
+  font: calibri;
+  font-size: .6em;
+}
 .not-authorized input{
   color: white;
   font-family: Roboto;

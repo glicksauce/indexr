@@ -59,6 +59,15 @@ class Oauth extends Component{
       document.cookie = ('access_token=' + token + ';' + expires + ';')
     }
 
+    setAccountIdAsCookie= (token, expireDays) =>{
+      let defaultExpDays = expireDays || 7 //setting cookie to expire in 7 days
+      var expDate = new Date()
+      expDate.setTime(expDate.getTime() + (defaultExpDays*24*60*60*1000))
+      let expires = "expires="+expDate.toUTCString()
+      document.cookie = ('account_id=' + token + ';' + expires + ';')
+    }
+
+    //checks db if user is there
     checkIfUserExists = (dbx_id) =>{
       let BaseURL = process.env.REACT_APP_BACKEND
 
@@ -118,6 +127,7 @@ class Oauth extends Component{
     deleteCookie = () =>{
       console.log("deleting cookie")
       document.cookie = "access_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+      document.cookie = "account_id= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
       window.location.replace(process.env.REACT_APP_DBX_REDIRECT_URI)
     }
     
@@ -128,17 +138,21 @@ class Oauth extends Component{
         let urlAccountId = this.parseQueryString(window.location.hash).account_id
         let authError = this.parseQueryString(window.location.hash).error
         // console.log("URL params are: ",this.parseQueryString(window.location.hash)) 
-        // console.log("Access Token is: ", urlAccessToken)
+         console.log("Account ID is : ", urlAccountId)
         // console.log("access error is: " + authError)
 
-        if (urlAccessToken != undefined){
+        if (urlAccountId != undefined){
+          this.setAccountIdAsCookie(urlAccountId)
           this.setAccessTokenAsCookie(urlAccessToken)
         }
 
         //loads access token as global variable
         let isAccessToken = this.props.getTokenFromCookies()
 
-        if (isAccessToken) {
+        //loads dropbox user id as global variable
+        let userAccountId = this.props.getAccountIdFromCookies()        
+
+        if (userAccountId) {
           this.checkIfUserExists(urlAccountId)
           .then(res => {
               console.log("user is: ", res)
@@ -150,13 +164,14 @@ class Oauth extends Component{
             })
 
           //set username, hide Dropbox connect, show main section
-          this.props.getDropboxUserName()
+          this.props.getDropboxUserName(urlAccessToken)
           .then(res =>{
               if (res) {
                 let welcomeString = "Welcome " + res.name.familiar_name
                 $('.authorized').append('<h2>').text(welcomeString)
                 $('.not-authorized').hide()
                 this.props.showContainer()
+                //need to add function to update 'last_access_token' in db in case it changes
               }
           })
           

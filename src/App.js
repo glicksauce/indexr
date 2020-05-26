@@ -12,6 +12,7 @@ require('isomorphic-fetch');
 
 //let Token = process.env.REACT_APP_DBX_TOKEN
 let sessionAccessToken;
+let sessionAccountId;
 var Dropbox = require('dropbox').Dropbox;
 
 
@@ -26,17 +27,30 @@ state = {
 }
 
 //=========================
-//Get access token from cookies
+//Get access_id and User Id from cookies
 //=========================
 getTokenFromCookies = () =>{
-  let tempToken = decodeURIComponent(document.cookie)
+  let tempToken = decodeURIComponent(document.cookie).split(";")
+    tempToken.forEach(token => {
+      if (token.indexOf('access_token=') != -1){
+        sessionAccessToken= token.substring(14)
+      }
+    })
 
-  let indexToken = tempToken.indexOf("access_token=")
-  sessionAccessToken = tempToken.substring(13)
-
-  console.log("temp token is: ", tempToken)
-  console.log("index of is: " + indexToken)
   console.log("sessionAccessToken is: " + sessionAccessToken)
+  return true
+}
+
+getAccountIdFromCookies = () =>{
+  let tempToken = decodeURIComponent(document.cookie).split(";")
+
+  tempToken.forEach(token => {
+    if (token.indexOf('account_id=') != -1){
+      sessionAccountId= token.substring(11)
+    }
+  })
+
+   console.log("sessionAccountId is: " + sessionAccountId)
   return true
 }
 
@@ -45,8 +59,8 @@ getTokenFromCookies = () =>{
 //=========================
 
 //pass Token to get username
-getDropboxUserName = () => {
-  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
+getDropboxUserName = (userAccessToken) => {
+  var dbx = new Dropbox({ accessToken: userAccessToken, fetch: fetch });
   let dbxAccount = dbx.usersGetCurrentAccount()
     .then(function(response) {
       console.log(response);
@@ -201,14 +215,10 @@ putInDatabase = (sessionAccessToken, imagePath, imageName, imageId, client_modif
 
   //localStorage.setItem(imageId, JSON.stringify({
     let BaseURL = process.env.REACT_APP_BACKEND
-    let dropboxUserId
-
-
-        const postImg = () =>{
 
         //format params as object
           let postParams = {
-            'dbx_user_id': dropboxUserId,
+            'dbx_user_id': sessionAccountId,
             'image_id': imageId,
             'image_path': imagePath,
             'image_name': imageName,
@@ -216,7 +226,7 @@ putInDatabase = (sessionAccessToken, imagePath, imageName, imageId, client_modif
             'tags': tags || ''
           }
 
-          fetch(BaseURL + 'users/' + dropboxUserId + "/albums/",{
+          fetch(BaseURL + 'users/' + sessionAccountId + "/albums/",{
             body: JSON.stringify(postParams),
             method: 'POST',
             headers: {
@@ -228,14 +238,6 @@ putInDatabase = (sessionAccessToken, imagePath, imageName, imageId, client_modif
           .then(data => console.log(data))
           // .then(() => console.log(obj))
           .catch(error => console.log(error))
-        }
-
-        this.getDropboxUserName()
-        .then(res =>{
-          dropboxUserId = res.account_id
-          //console.log("dbx id is: ", dropboxUserId)
-          postImg()
-        })
 
   }
 
@@ -302,73 +304,22 @@ readFromLocalStorage = (tags, resultsQty) =>{
 readFromDatabase = (tags, maxResultsQty) =>{
   let BaseURL = process.env.REACT_APP_BACKEND
   let dropboxUserId
-//   let resultsCount = 0
-//     console.log("rendering " + tags)
 
-//     //default of results to return
-//     if (resultsQty == undefined){
-//       maxResultsQty = 5
-//     }
-//     // iterate dbcount
-//     for (var i = 0; resultsCount < maxResultsQty; i++) {
-//         if (resultsCount >= maxResultsQty) {
-//           break
-//         }
-//         // set iteration key name
-//         var key = localStorage.key(i);
 
-//         // use key name to retrieve the corresponding value
-//         var value = localStorage.getItem(key);
+  console.log("db tags params are: ", tags)
+  fetch(BaseURL + 'users/' + sessionAccountId + "/tagsearch/" +tags,{
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => (res.json()))
+  .then(data => console.log(data))
+  // .then(() => console.log(obj))
+  .catch(error => console.log(error))
 
-//         let imgObj = JSON.parse(localStorage.getItem(key))
-//         // console.log the iteration key and value
-//         //console.log(imgObj)
-//         //console.log('Key: ' + key + ', Value: ' + value);  
-
-            const patchImg = () =>{
-                console.log("db tags params are: ", tags)
-                fetch(BaseURL + 'users/' + dropboxUserId + "/tagsearch/" +tags,{
-                  method: 'GET',
-                  headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                  }
-                })
-                .then(res => (res.json()))
-                .then(data => console.log(data))
-                // .then(() => console.log(obj))
-                .catch(error => console.log(error))
-              }
-
-              this.getDropboxUserName()
-              .then(res =>{
-                dropboxUserId = res.account_id
-                //console.log("dbx id is: ", dropboxUserId)
-                patchImg()
-              })
-//         let imgOb = fetch 
-//         //query based on tags 
-//         // tags param of "" indicates to search all tags
-//         if (tags == "") {
-//           console.log("got in here")
-//           this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)   
-//           resultsCount += 1       
-//         } else if (imgObj.tags.length > 0) {
-//             //if (imgObj.tags.some(result => tags.indexOf(result) >= 0)) { //'OR' SEARCH FUNCTION
-//             if (tags.every(result => imgObj.tags.indexOf(result) >= 0)) { //'AND' SEARCH FUNCTION    
-//               console.log("got in this one")  
-//               console.log(imgObj, tags)       
-//               this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
-//               resultsCount += 1
-//               //this.getDropboxThumbnails(imgObj.imagePath,imgObj.imageName)  
-//             }
-//         }
-
-//     }
-
-//     //update thumbnail count
-//     let totalImages = localStorage.length
-//     $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
+  // $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
         
 }
 
@@ -524,43 +475,33 @@ updateTagsInDatabase = (imageId, tags) =>{
   let BaseURL = process.env.REACT_APP_BACKEND
   let dropboxUserId
 
-
-      const patchImg = () =>{
-
       //format params as object
-        let postParams = {
-          // 'dbx_user_id': dropboxUserId,
-          // 'image_id': imageId,
-          'tags': tags
-        }
-        console.log(JSON.stringify(postParams))
-        fetch(BaseURL + 'users/' + dropboxUserId + "/albums/" +imageId,{
-          body: JSON.stringify(postParams),
-          method: 'PATCH',
-          headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(res => (res.json()))
-        .then(data => console.log(data))
-        // .then(() => console.log(obj))
-        .catch(error => console.log(error))
+      let postParams = {
+        // 'dbx_user_id': dropboxUserId,
+        // 'image_id': imageId,
+        'tags': tags
       }
 
-      this.getDropboxUserName()
-      .then(res =>{
-        dropboxUserId = res.account_id
-        //console.log("dbx id is: ", dropboxUserId)
-        patchImg()
+      console.log(JSON.stringify(postParams))
+      fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId,{
+        body: JSON.stringify(postParams),
+        method: 'PATCH',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        }
       })
+      .then(res => (res.json()))
+      .then(data => console.log(data))
+      // .then(() => console.log(obj))
+      .catch(error => console.log(error))
 
 }
 
   componentDidMount() {
     //  this.readFromLocalStorage("",25)
     //this.updateTagsInDatabase('id:Jo_ZZoosmRAAAAAAAAAAFw', ['fun','run'])
-    this.getDropboxUserName()
+    //this.getDropboxUserName()
     $('.tags-main').change(this.handleChange)
     // this.putInDatabase(sessionAccessToken, '', '', 'id:test12', '2002-10-18T18:56:22Z', '')
 
@@ -571,6 +512,7 @@ updateTagsInDatabase = (imageId, tags) =>{
         <div className="App">
             <Oauth
               getTokenFromCookies = {this.getTokenFromCookies}
+              getAccountIdFromCookies = {this.getAccountIdFromCookies}
               getDropboxFileSearch = {this.getDropboxFileSearch}
               getDropboxUserName = {this.getDropboxUserName}
               showContainer = {this.showContainer}
