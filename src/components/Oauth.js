@@ -186,10 +186,10 @@ class Oauth extends Component{
         return(
           <header className="App-header">
             <a id="page_header"></a>
-            <div class="title-container">
+            <div className="title-container">
               <h1></h1>
               <h1>indexr</h1>
-              <div class="logout-div">
+              <div className="logout-div">
                 <button title="log out"></button>
                 </div>
             </div>

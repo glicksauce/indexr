@@ -184,7 +184,6 @@ Right container section ----------------------------------------------- */
 .right-container{
   max-height: 70vh;
   overflow-y: auto;
-  overflow-x: hidden;
   width: 350px;
   min-width: 350px;
   /* background: green; */
