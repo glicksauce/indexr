@@ -1,3 +1,5 @@
+/* GLOBAL--------------------------------- */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,6 +7,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 code {
@@ -12,15 +15,62 @@ code {
     monospace;
 }
 
+input:focus { 
+  outline: none !important;
+  border-color: #719ECE;
+  box-shadow: 0 0 10px #719ECE;
+}
 /* 
 header section ------------------------------- */
-.App-header h1{
-  margin: 15px;
+.App-header h1, .logout-div{
+  display: inline-block;
+  width: 33%;
+  margin: 15px 0 0 0;
+  text-transform: uppercase;
 }
+
+.not-authorized input{
+  color: white;
+  font-family: Roboto;
+  background: rgba(229, 107, 111, .2);
+  height: 50px;
+  width: 170px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 2px solid gray;
+  box-shadow: 2px 2px 2px rgb(25, 8, 29);
+}
+
+.not-authorized:hover input{
+  background: rgba(229, 107, 111, .9);
+  font: outline;
+  border: 2px solid black;
+}
+
+.logout-div{
+  text-align: center;
+}
+
+.logout-div button{
+  background: url('/images/logout.png') no-repeat;
+  background-size: 25px 25px;
+  background-color: RGB(109, 89, 122);
+  height: 30px;
+  width: 30px;
+}
+
+.lougout-div:hover{
+  cursor: pointer;
+}
+
 .App-header h4{
+  text-transform: uppercase;
   margin: 20px;
 }
 
+.authorized {
+  margin-bottom: 10px;
+}
 /* container --------------------------------------- */
 /* .container {
   height: 100px;
@@ -48,14 +98,17 @@ header section ------------------------------- */
 .left-container-image-container{
   margin: 0 auto;
   width: 90%;
-  height: 60vh;
+  height: 50vh;
+  box-shadow: inset 3px 3px 30px 3px rgba(172, 125, 179, 0.233);
 }
 
 .left-container-image-container img {
   width: auto;
   height: auto;
-  max-height: 60vh;
+  max-height: 50vh;
   max-width: 100%;
+  border-radius: 10px;
+  
 }
 
 .label{
@@ -70,6 +123,9 @@ header section ------------------------------- */
   color: rgb(35, 73, 51);
   width: 400px;
   height: 20px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  border: 1px solid lightblue;
 }
 
 .line{
@@ -103,48 +159,92 @@ header section ------------------------------- */
 .middle-container{
   width: 300px;
   float: left;
-  background: rgba(192, 152, 77, 0.4);
-  max-height: 70vh;
+  height: 70vh;
   overflow-y: auto;
+  background: rgb(109, 89, 122);
+  border-radius: 10px;
 }
 
 .tag-search{
   margin: 0 10px;
+  text-transform: uppercase;
+
 }
 .custom-tag-input{
   height: 20px;
   text-align: center; 
   font-weight: bold;
   color: rgb(29, 49, 29);
+  border-radius: 5px;
+  text-transform: uppercase;
+  border: 1px dotted purple;
 }
 /* 
 Right container section ----------------------------------------------- */
 .right-container{
   max-height: 70vh;
   overflow-y: auto;
+  overflow-x: hidden;
   width: 350px;
+  min-width: 350px;
   /* background: green; */
   float: right;
-  margin-right: 20px;
+  margin-right: 10%;
 }
 
-.thumb-image{
-  height: 144px;
-  width: 350px;
-  margin: 5px 0;
-  background: blue;
+.right-container::-webkit-scrollbar {
+  background: RGB(234, 172, 139, .2);
 }
 
-.thumb-image img{
-  height: 144px;
-  width: 350px;
-  object-fit: cover;
+.right-container::-webkit-scrollbar-thumb {
+  background: RGB(181, 101, 118);
+  border-radius: 7px;
 }
 
 .thumb-browser{
-  margin: 0 20px;
-  width: 300px;
+  text-transform: uppercase;
+  margin: 0;
+  width: 350px;
   /* background: yellow; */
   display: flex;
   flex-flow: row wrap;
 }
+
+.refresh-icon-div button{
+  width: 25px;
+  height: 25px;
+  border: 2px solid rgb(63, 63, 172);
+  border-radius: 5px;
+  opacity: .6;
+  background: url('/images/refresh_icon.svg') no-repeat;
+  background-size: 20px 20px;
+}
+
+.refresh-icon-div:hover button{
+  opacity: 1;
+  cursor: pointer;
+}
+
+.thumb-browser:hover img{
+  opacity: 1;
+}
+.thumb-heading{
+  display: inline-block;
+}
+.thumb-image{
+  height: 144px;
+  width: 350px;
+  margin: 10px 0;
+  
+}
+
+.thumb-image img{
+  height: 144px;
+  width: 100%;
+  object-fit: cover;
+  margin: 0;
+  padding: 0;
+  border-radius: 5px;
+}
+
+

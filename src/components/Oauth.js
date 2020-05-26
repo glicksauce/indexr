@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as $ from 'jquery'
 require('isomorphic-fetch')
 
+
 let Token = process.env.REACT_APP_DBX_TOKEN
 var Dropbox = require('dropbox').Dropbox;
 
@@ -113,6 +114,12 @@ class Oauth extends Component{
         .catch(error => console.log(error))
       
     }
+
+    deleteCookie = () =>{
+      console.log("deleting cookie")
+      document.cookie = "access_token= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+      window.location.replace(process.env.REACT_APP_DBX_REDIRECT_URI)
+    }
     
 
     componentDidMount() {
@@ -153,6 +160,8 @@ class Oauth extends Component{
               }
           })
           
+          //set logout clickfunction
+          $('.logout-div').click(this.deleteCookie)
           //add pull images from dropbox
           //this.props.getDropboxFileSearch(0, 'all', 1)
         }
@@ -177,14 +186,20 @@ class Oauth extends Component{
         return(
           <header className="App-header">
             <a id="page_header"></a>
-            <h1>indexr</h1>
+            <div class="title-container">
+              <h1></h1>
+              <h1>indexr</h1>
+              <div class="logout-div">
+                <button title="log out"></button>
+                </div>
+            </div>
             <h4>a better way to tag and view your images</h4>
             <div className='auth-window'>
               <div className='not-authorized'>
                 <p>Please connect to Dropbox to begin tagging photos</p>
                   <input
                       type="submit"
-                      value="connect"
+                      value="CONNECT TO DROPBOX"
                       onClick={this.dropboxAuthenticate}
                   />
 

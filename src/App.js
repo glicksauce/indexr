@@ -58,17 +58,17 @@ getDropboxUserName = () => {
     return dbxAccount
 }
 
-//get list of contents including subfolders
-getDropboxFolderContents = () => {
-  var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
-dbx.filesListFolder({ path: "/camera uploads"})
-.then(function(response) {
-  console.log(response);
-})
-.catch(function(error) {
-  console.log(error);
-});
-}
+// //get list of contents including subfolders
+// getDropboxFolderContents = () => {
+//   var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
+// dbx.filesListFolder({ path: "/camera uploads"})
+// .then(function(response) {
+//   console.log(response);
+// })
+// .catch(function(error) {
+//   console.log(error);
+// });
+// }
 
 //get thumbnails per given path to file
 getDropboxThumbnails = (path, imageName) => {
@@ -124,7 +124,7 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
   let isMore = false
   
   //initialize filetypes for search param "all" indicates to use all of these extenesions in search
-  if (typeof imgQuery == undefined || imgQuery == "all") {
+  if (typeof imgQuery == 'undefined' || imgQuery == "all") {
     imgQuery = ['.jpg', '.png', '.gif', '.tiff', '.jpeg', '.bmp']
   }
 
@@ -134,6 +134,7 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
   }
 
   //iterate through each img ext to query
+  console.log(imgQuery)
   imgQuery.forEach(imgExt => {
       var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
       dbx.filesSearch({ path: "", query: imgExt, start: startIndex})
@@ -141,7 +142,7 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
               response.matches.forEach((item,index) => {
                   if (item.match_type['.tag'] == "filename") {
                     //console.log(item)
-                    this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
+                    this.putInLocalStorage(item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified, false) //last item 'false' means don't allow repeats
                     this.putInDatabase(sessionAccessToken, item.metadata.path_lower, item.metadata.name, item.metadata.id, item.metadata.client_modified)
                     //this.getDropboxThumbnails(item.metadata.path_lower,item.metadata.name)
                   }
@@ -178,14 +179,22 @@ getDropboxFileSearch = (startIndex, imgQuery, iterations) => {
 //LOCALSTORAGE REQUESTS
 //=========================
 
-putInLocalStorage = (imagePath, imageName, imageId, client_modified_date, tags) =>{
-  localStorage.setItem(imageId, JSON.stringify({
-    'imagePath': imagePath,
-    'imageName': imageName,
-    'client_modified_date': client_modified_date,
-    'tags': tags || ''
+putInLocalStorage = (imagePath, imageName, imageId, client_modified_date, tags, allowRepeats) =>{
 
-  }))
+  //if skipDuplicates isn't passed it is assigned false
+  if (allowRepeats == 'undefined') {
+    allowRepeats = true
+  }
+
+  //only run if allowRepeats is set to true or if item is not already in localstorage
+  if (allowRepeats || localStorage.getItem(imageId) == null) {
+      localStorage.setItem(imageId, JSON.stringify({
+        'imagePath': imagePath,
+        'imageName': imageName,
+        'client_modified_date': client_modified_date,
+        'tags': tags || ''
+    }))
+  }
 }
 
 putInDatabase = (sessionAccessToken, imagePath, imageName, imageId, client_modified_date, tags) =>{
@@ -553,6 +562,7 @@ updateTagsInDatabase = (imageId, tags) =>{
     //this.updateTagsInDatabase('id:Jo_ZZoosmRAAAAAAAAAAFw', ['fun','run'])
     this.getDropboxUserName()
     $('.tags-main').change(this.handleChange)
+    // this.putInDatabase(sessionAccessToken, '', '', 'id:test12', '2002-10-18T18:56:22Z', '')
 
   } 
 
@@ -595,6 +605,7 @@ updateTagsInDatabase = (imageId, tags) =>{
                 readFromDatabase = {this.readFromDatabase}
                 clearThumbnails = {this.clearThumbnails}
                 clearImagesFromState = {this.clearImagesFromState}
+                
               />
             </div>
             <div className="right-container">
@@ -603,6 +614,7 @@ updateTagsInDatabase = (imageId, tags) =>{
               thumbnailArray = {this.state.thumbnailArray}
               onClick = {this.thumbnailOnClick}
               clearImagesFromState = {this.clearImagesFromState}
+              getDropboxFileSearch = {this.getDropboxFileSearch}
               />
             </div>
             {/* <input type="file"></input>
