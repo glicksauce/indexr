@@ -7,7 +7,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+  overflow: visible;
 }
 
 code {
@@ -187,24 +187,71 @@ header section ------------------------------- */
 Right container section ----------------------------------------------- */
 .right-container{
   max-height: 70vh;
-  overflow-y: auto;
   width: 350px;
   min-width: 350px;
   /* background: green; */
   float: right;
   margin-right: 10%;
+  
 }
 
-.right-container::-webkit-scrollbar {
-  background: RGB(234, 172, 139, .2);
+.thumb-browser-header{
+  background: #f0e6ef;
+  height: 80px;
+  border-radius: 5px 5px 0 0 ;
 }
 
-.right-container::-webkit-scrollbar-thumb {
+.thumb-browser-header h3{
+  margin: 5px 0;
+  width: 100%;
+}
+
+.click-button-div{
+  margin: 0 0 10px 0;
+  
+}
+
+.click-button-div button{
+  width: 25px;
+  height: 25px;
+  border: 2px solid rgb(63, 63, 172);
+  border-radius: 5px;
+  opacity: .6;
+  background: url('/images/refresh_icon.svg') no-repeat;
+  margin: 0 3px;
+}
+
+#re-sync:hover, #random:hover{
+  opacity: 1;
+  cursor: pointer;
+}
+
+#re-sync{
+  background: url('/images/refresh_icon.svg') no-repeat;
+  background-size: 20px 20px;
+  
+}
+
+#random{
+  background: url('/images/random.png') no-repeat;
+  background-size: 18px 18px;
+  background-position-x: 2px;
+  background-position-y: 1px;
+}
+
+.thumb-browser::-webkit-scrollbar, .middle-container::-webkit-scrollbar {
+  background: RGB(234, 172, 139, .5);
+}
+
+.thumb-browser::-webkit-scrollbar-thumb, .middle-container::-webkit-scrollbar-thumb {
   background: RGB(181, 101, 118);
   border-radius: 7px;
 }
 
 .thumb-browser{
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 61.5vh;
   text-transform: uppercase;
   margin: 0;
   width: 350px;
@@ -213,20 +260,6 @@ Right container section ----------------------------------------------- */
   flex-flow: row wrap;
 }
 
-.refresh-icon-div button{
-  width: 25px;
-  height: 25px;
-  border: 2px solid rgb(63, 63, 172);
-  border-radius: 5px;
-  opacity: .6;
-  background: url('/images/refresh_icon.svg') no-repeat;
-  background-size: 20px 20px;
-}
-
-.refresh-icon-div:hover button{
-  opacity: 1;
-  cursor: pointer;
-}
 
 .thumb-browser:hover img{
   opacity: 1;
@@ -236,7 +269,7 @@ Right container section ----------------------------------------------- */
 }
 .thumb-image{
   height: 144px;
-  width: 350px;
+  width: 325px;
   margin: 10px 0;
   
 }
@@ -250,4 +283,37 @@ Right container section ----------------------------------------------- */
   border-radius: 5px;
 }
 
+@media only screen and (max-width: 1848px) {
+  body {
+    /* background-color: orange; */
+  }
+  .right-container{
+    margin-right: 15px;
+  }
+}
+@media only screen and (max-width: 1680px) {
+  body {
+    /* background-color: lightblue; */
+  }
+  .left-container{
+    width: 100%;
+  }
+  .middle-container{
+    height: 50vh;
+  }
+  .right-container{
+    margin-left: 10%;
+    clear: both;
+    float: left;
+    height: 40vh;
+  }
+}
 
+@media only screen and (max-width: 1314px) {
+  .middle-container{
+    margin-left: 10%;
+  }
+.thumb-browser{
+  margin-bottom: 75px;
+}
+}
