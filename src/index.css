@@ -164,17 +164,31 @@ header section ------------------------------- */
   width: 300px;
   float: left;
   height: 70vh;
-  overflow-y: auto;
-  background: rgb(109, 89, 122);
-  border-radius: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.tag-search-header{
+  background: #f0e6ef;
+  width: 100%;
+  height: 80px;
+  border-radius: 5px 5px 0 0 ;
+  margin: 0 0 10px 0;
+}
+
+.tag-search-header h3{
+  margin: 0;
+  padding: 0;
 }
 
 .tag-search{
-  margin: 0 10px;
+  overflow-y: auto;
+  background: rgb(109, 89, 122);
   text-transform: uppercase;
 
 }
 .custom-tag-input{
+  margin: 10px 0 0 0;
   height: 20px;
   text-align: center; 
   font-weight: bold;
@@ -202,7 +216,7 @@ Right container section ----------------------------------------------- */
 }
 
 .thumb-browser-header h3{
-  margin: 5px 0;
+  margin: 0 0 5px 0;
   width: 100%;
 }
 

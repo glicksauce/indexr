@@ -115,12 +115,15 @@ class TagSearch extends Component{
     render () {
         
         return(
-            
-            <div className='tag-search'>
-                <h3>Tag Search</h3>
-                <h6>select tag to add to 'AND' search</h6>
-                <div className="tags-used"></div>
-            </div>
+            <>  
+                <div className='tag-search-header'>
+                    <h3>Tag Search</h3>
+                    <h6>select tag to add to 'AND' search</h6>
+                </div>
+                <div className='tag-search'>
+                    <div className="tags-used"></div>
+                </div>
+            </>
         )
     }
     
