@@ -252,7 +252,7 @@ clearImagesFromState = () =>{
   })
 }
 
-readFromLocalStorage = (tags, resultsQty) =>{
+readFromLocalStorage = (tags, resultsQty, isRandom) =>{
   let resultsCount = 0
     console.log("rendering " + tags)
 
@@ -266,8 +266,15 @@ readFromLocalStorage = (tags, resultsQty) =>{
         if (resultsCount >= resultsQty) {
           break
         }
-        // set iteration key name
-        var key = localStorage.key(i);
+
+        //if isRandom is on get a random key from localStorage otherwise just pull in order
+        if (isRandom) {
+          let randomInt = Math.floor(Math.random() * localStorage.length)
+          console.log("random int is ", randomInt)
+          var key = localStorage.key(randomInt)
+        } else {
+          var key = localStorage.key(i);
+        }
 
         // use key name to retrieve the corresponding value
         var value = localStorage.getItem(key);

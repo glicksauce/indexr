@@ -15,7 +15,7 @@ class ThumbnailBrowser extends Component{
          $('#re-sync').click(this.props.getDropboxFileSearch)
          $('#random').click(() =>{
              this.props.clearImagesFromState()
-             this.props.readFromLocalStorage("")
+             this.props.readFromLocalStorage("",25,true)
          })
     }
 

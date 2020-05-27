@@ -163,7 +163,6 @@ header section ------------------------------- */
 .middle-container{
   width: 300px;
   float: left;
-  height: 70vh;
   margin: 0;
   padding: 0;
 }
@@ -185,7 +184,7 @@ header section ------------------------------- */
   overflow-y: auto;
   background: rgb(109, 89, 122);
   text-transform: uppercase;
-
+  height: 60.5vh;
 }
 .custom-tag-input{
   margin: 10px 0 0 0;
@@ -253,11 +252,11 @@ Right container section ----------------------------------------------- */
   background-position-y: 1px;
 }
 
-.thumb-browser::-webkit-scrollbar, .middle-container::-webkit-scrollbar {
+.thumb-browser::-webkit-scrollbar, .tag-search::-webkit-scrollbar {
   background: RGB(234, 172, 139, .5);
 }
 
-.thumb-browser::-webkit-scrollbar-thumb, .middle-container::-webkit-scrollbar-thumb {
+.thumb-browser::-webkit-scrollbar-thumb, .tag-search::-webkit-scrollbar-thumb {
   background: RGB(181, 101, 118);
   border-radius: 7px;
 }
