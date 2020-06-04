@@ -105,7 +105,7 @@ class Oauth extends Component{
 
         //format params as object
         let postParams = {
-          'dbx_id': dbx_id,
+          'dbx_user_id': dbx_id,
           'last_access_token': access_token
         }
 

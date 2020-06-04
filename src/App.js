@@ -219,11 +219,10 @@ putInDatabase = (sessionAccessToken, imagePath, imageName, imageId, client_modif
         //format params as object
           let postParams = {
             'dbx_user_id': sessionAccountId,
-            'image_id': imageId,
+            'dbx_image_id': imageId,
             'image_path': imagePath,
             'image_name': imageName,
-            'client_modified_date': client_modified_date,
-            'tags': tags || ''
+            'client_modified_date': client_modified_date
           }
 
           fetch(BaseURL + 'users/' + sessionAccountId + "/albums/",{
@@ -482,26 +481,29 @@ updateTagsInDatabase = (imageId, tags) =>{
   let BaseURL = process.env.REACT_APP_BACKEND
   let dropboxUserId
 
-      //format params as object
-      let postParams = {
-        // 'dbx_user_id': dropboxUserId,
-        // 'image_id': imageId,
-        'tags': tags
-      }
-
-      console.log(JSON.stringify(postParams))
-      fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId,{
-        body: JSON.stringify(postParams),
-        method: 'PATCH',
-        headers: {
-          'Accept': 'application/json, text/plain, */*',
-          'Content-Type': 'application/json'
+      tags.forEach(tag => {
+        //format params as object
+        let postParams = {
+          'dbx_user_id': sessionAccountId,
+          // 'image_id': imageId,
+          'tag_string': tag.toLowerCase()
         }
+
+        //calls will crete a new tag or return tag that has slready been created
+        console.log(JSON.stringify(postParams))
+        fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/tags",{
+          body: JSON.stringify(postParams),
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => (res.json()))
+        .then(data => console.log("backend tag return is : ", data))
+        // .then(() => console.log(obj))
+        .catch(error => console.log(error))
       })
-      .then(res => (res.json()))
-      .then(data => console.log(data))
-      // .then(() => console.log(obj))
-      .catch(error => console.log(error))
 
 }
 
