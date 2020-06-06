@@ -500,7 +500,25 @@ updateTagsInDatabase = (imageId, tags) =>{
           }
         })
         .then(res => (res.json()))
-        .then(data => console.log("backend tag return is : ", data))
+        .then(data => {
+          console.log("backend tag return is : ", data)
+          //delete all album tags for this image id
+
+          //add album tags for all tags for this image id
+          let albumTagsParams = {
+            'tag_id':data.id,
+            'dbx_image_id':imageId
+          }
+          console.log("albumTagParams are: ", albumTagsParams)
+          fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/album_tags",{
+            body: JSON.stringify(albumTagsParams),
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json, text/plain, */*',
+              'Content-Type': 'application/json'
+            }
+            })
+        })
         // .then(() => console.log(obj))
         .catch(error => console.log(error))
       })
