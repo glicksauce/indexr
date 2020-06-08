@@ -489,40 +489,51 @@ updateTagsInDatabase = (imageId, tags) =>{
           'tag_string': tag.toLowerCase()
         }
 
-        //calls will crete a new tag or return tag that has slready been created
-        console.log(JSON.stringify(postParams))
-        fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/tags",{
-          body: JSON.stringify(postParams),
-          method: 'POST',
+        //delete all album_tags for this image id
+        fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/destroy_album_tags",{
+          method: 'DELETE',
           headers: {
             'Accept': 'application/json, text/plain, */*',
             'Content-Type': 'application/json'
           }
-        })
-        .then(res => (res.json()))
-        .then(data => {
-          console.log("backend tag return is : ", data)
-          //delete all album tags for this image id
+          })
+          .then(res =>{
+                //calls will crete a new tag or return tag that has slready been created
+                console.log(JSON.stringify(postParams))
+                fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/tags",{
+                  body: JSON.stringify(postParams),
+                  method: 'POST',
+                  headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                  }
+                })
+                .then(res => (res.json()))
+                .then(data => {
+                  console.log("backend tag return is : ", data)
+                    
+                  //add album tags for all tags for this image id
+                  let albumTagsParams = {
+                    'tag_id':data.id
+                  }
 
-          //add album tags for all tags for this image id
-          let albumTagsParams = {
-            'tag_id':data.id,
-            'dbx_image_id':imageId
-          }
-          console.log("albumTagParams are: ", albumTagsParams)
-          fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/album_tags",{
-            body: JSON.stringify(albumTagsParams),
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json, text/plain, */*',
-              'Content-Type': 'application/json'
-            }
+                  console.log("albumTagParams are: ", albumTagsParams)
+                  fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/album_tags",{
+                    body: JSON.stringify(albumTagsParams),
+                    method: 'POST',
+                    headers: {
+                      'Accept': 'application/json, text/plain, */*',
+                      'Content-Type': 'application/json'
+                    }
+                    })
+                })
+                // .then(() => console.log(obj))
+                .catch(error => console.log(error))
             })
-        })
-        // .then(() => console.log(obj))
-        .catch(error => console.log(error))
-      })
 
+          })
+
+       
 }
 
   componentDidMount() {
