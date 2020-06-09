@@ -107,9 +107,14 @@ class TagSearch extends Component{
     }
 
     componentDidMount() {
-       
-        let tagsObj = this.props.getTagsFromLocalStorage()
-        this.renderTagsUsed(tagsObj)
+        // get tags from from localstorage
+        // let tagsObj = this.props.getTagsFromLocalStorage()
+
+        // get tags from back-end
+        this.props.getTagsFromDatabase()
+        .then(result => {
+            this.renderTagsUsed(result)
+        })
         //$('#smoke').css("background", "blue")
     }
     render () {

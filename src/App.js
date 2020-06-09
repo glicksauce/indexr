@@ -360,6 +360,28 @@ getTagsFromLocalStorage = () =>{
   return tagsObj
 }
 
+getTagsFromDatabase = async() => {
+  let BaseURL = process.env.REACT_APP_BACKEND
+  let dropboxUserId
+
+  return await Promise.resolve(fetch(BaseURL + 'users/' + sessionAccountId + "/user_album_tags",{
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    }
+    })
+    .then(res => res.json())
+    .then(data => {
+      //set state to tags that were just pulled
+      this.setState({
+        tagsObj: data
+      })
+      return data
+    })
+  )
+}
+
 //=========================
 //BLOB AND IMAGE RENDERING
 //=========================
@@ -510,22 +532,22 @@ updateTagsInDatabase = (imageId, tags) =>{
                 })
                 .then(res => (res.json()))
                 .then(data => {
-                  console.log("backend tag return is : ", data)
-                    
-                  //add album tags for all tags for this image id
-                  let albumTagsParams = {
-                    'tag_id':data.id
-                  }
-
-                  console.log("albumTagParams are: ", albumTagsParams)
-                  fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/album_tags",{
-                    body: JSON.stringify(albumTagsParams),
-                    method: 'POST',
-                    headers: {
-                      'Accept': 'application/json, text/plain, */*',
-                      'Content-Type': 'application/json'
+                    console.log("backend tag return is : ", data)
+                      
+                    //add album tags for all tags for this image id
+                    let albumTagsParams = {
+                      'tag_id':data.id
                     }
-                    })
+
+                    console.log("albumTagParams are: ", albumTagsParams)
+                    fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/album_tags",{
+                      body: JSON.stringify(albumTagsParams),
+                      method: 'POST',
+                      headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-Type': 'application/json'
+                      }
+                      })
                 })
                 // .then(() => console.log(obj))
                 .catch(error => console.log(error))
@@ -581,6 +603,7 @@ updateTagsInDatabase = (imageId, tags) =>{
               <TagSearch
                 tagsObj = {this.state.tagsObj}
                 getTagsFromLocalStorage = {this.getTagsFromLocalStorage}
+                getTagsFromDatabase = {this.getTagsFromDatabase}
                 readFromLocalStorage = {this.readFromLocalStorage}
                 readFromDatabase = {this.readFromDatabase}
                 clearThumbnails = {this.clearThumbnails}
