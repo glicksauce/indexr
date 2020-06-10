@@ -15,7 +15,8 @@ class ThumbnailBrowser extends Component{
          $('#re-sync').click(this.props.getDropboxFileSearch)
          $('#random').click(() =>{
              this.props.clearImagesFromState()
-             this.props.readFromLocalStorage("",25,true)
+            //  this.props.readFromLocalStorage("",25,true)
+             this.props.readFromDatabase("",5,true)
          })
     }
 
@@ -34,8 +35,8 @@ class ThumbnailBrowser extends Component{
                 
 
                 {this.props.thumbnailArray ? 
-                    this.props.thumbnailArray.map(thumbnail =>
-                    <a key={thumbnail.imageId} href="#page_header">
+                    this.props.thumbnailArray.map((thumbnail, index) =>
+                    <a key={index + "+" + thumbnail.imageId} href="#page_header">
                         <div 
                             className="thumb-image"
                             onClick={() => this.props.onClick(thumbnail.imageId)}

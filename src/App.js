@@ -307,25 +307,63 @@ readFromLocalStorage = (tags, resultsQty, isRandom) =>{
         
 }
 
-readFromDatabase = (tags, maxResultsQty) =>{
+readFromDatabase = (tags, maxResultsQty, isRandom) =>{
   let BaseURL = process.env.REACT_APP_BACKEND
   let dropboxUserId
+  let resultsCount = 0
 
 
-  console.log("db tags params are: ", tags)
-  fetch(BaseURL + 'users/' + sessionAccountId + "/tagsearch/" +tags,{
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json, text/plain, */*',
-      'Content-Type': 'application/json'
+  //if isRandom is on get a random key from localStorage otherwise just pull in order
+  // if (isRandom) {
+  //   let randomInt = Math.floor(Math.random() * localStorage.length)
+  //   console.log("random int is ", randomInt)
+  //   var key = localStorage.key(randomInt)
+  // } else {
+  //   var key = localStorage.key(i);
+  // }
+
+    //default of results to return
+    if (maxResultsQty == undefined){
+      maxResultsQty = 25
     }
-  })
-  .then(res => (res.json()))
-  .then(data => console.log(data))
-  // .then(() => console.log(obj))
-  .catch(error => console.log(error))
 
-  // $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
+    //iterate through maxresultsQty param
+    for (resultsCount; resultsCount<maxResultsQty; resultsCount++){
+    //case: no tag params are given, get a random image:
+      if (tags == "") {
+        console.log("no tags given")
+        console.log("db tags params are: ", tags)
+        fetch(BaseURL + 'users/' + sessionAccountId + "/albums/random_album_id/",{
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          this.getDropboxThumbnails(data.image_path, data.image_name)
+          // resultsCount += 1     
+        })
+      }
+    }
+
+    //case: no tag params are provided
+
+    console.log("db tags params are: ", tags)
+    fetch(BaseURL + 'users/' + sessionAccountId + "/tagsearch/" +tags,{
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => (res.json()))
+    .then(data => console.log(data))
+    // .then(() => console.log(obj))
+    .catch(error => console.log(error))
+
+  // // $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
         
 }
 
@@ -614,6 +652,7 @@ updateTagsInDatabase = (imageId, tags) =>{
             <div className="right-container">
               <ThumbnailBrowswer 
               readFromLocalStorage = {this.readFromLocalStorage}
+              readFromDatabase = {this.readFromDatabase}
               thumbnailArray = {this.state.thumbnailArray}
               onClick = {this.thumbnailOnClick}
               clearImagesFromState = {this.clearImagesFromState}
