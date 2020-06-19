@@ -348,10 +348,9 @@ readFromDatabase = (tags, maxResultsQty, isRandom) =>{
       }
     }
 
-    //case: no tag params are provided
-
+    //case: tag params are provided
     console.log("db tags params are: ", tags)
-    fetch(BaseURL + 'users/' + sessionAccountId + "/tagsearch/" +tags,{
+    fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" + tags + "/tags_search" ,{
       method: 'GET',
       headers: {
         'Accept': 'application/json, text/plain, */*',
@@ -359,8 +358,16 @@ readFromDatabase = (tags, maxResultsQty, isRandom) =>{
       }
     })
     .then(res => (res.json()))
-    .then(data => console.log(data))
-    // .then(() => console.log(obj))
+    .then(data => {
+        console.log("db found images are ", data)
+        console.log(data, data.length)
+        data.forEach(result => {
+          console.log("db result result is: ", result.album_tags)
+          if (result.image_path) {
+            this.getDropboxThumbnails(result.image_path, result.image_name)
+          }
+        })
+    })
     .catch(error => console.log(error))
 
   // // $('.thumbnail-heading').text("Showing " + resultsCount + " of " + totalImages + " images in library")
@@ -533,6 +540,8 @@ tagsUpdate = (imageId, tags) => {
     //adding tags to image in database
     console.log("adding to db: ", imageId, tags)
     this.updateTagsInDatabase(imageId, tags.split(" "))
+
+
   }
 }
 
@@ -587,7 +596,21 @@ updateTagsInDatabase = (imageId, tags) =>{
                       }
                       })
                 })
-                // .then(() => console.log(obj))
+                .then(updateTagsSearch =>{
+                      //force TagSearch.js to reload:
+                      return (
+                        <TagSearch
+                        key = {Date.now()}
+                        tagsObj = {this.state.tagsObj}
+                        getTagsFromLocalStorage = {this.getTagsFromLocalStorage}
+                        getTagsFromDatabase = {this.getTagsFromDatabase}
+                        readFromLocalStorage = {this.readFromLocalStorage}
+                        readFromDatabase = {this.readFromDatabase}
+                        clearThumbnails = {this.clearThumbnails}
+                        clearImagesFromState = {this.clearImagesFromState}
+                        />
+                        )
+                })
                 .catch(error => console.log(error))
             })
 

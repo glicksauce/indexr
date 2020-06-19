@@ -37,7 +37,11 @@ class TagSearch extends Component{
             if (!isCustomTagSearch) {
                 $('#' + tag).css("color", "blue")
             }
-            newSearchTags.push(tag)
+
+            //only add the tag if it isn't empty
+            if (tag != ""){
+                newSearchTags.push(tag)
+            }
         }
 
         //this.props.clearThumbnails()
@@ -48,9 +52,9 @@ class TagSearch extends Component{
             selectedSearchTags: newSearchTags
         }, () =>{
             if (!bypassImageRender) {
-                console.log("reading from local storage with tags: " + this.state.selectedSearchTags)
-                this.props.readFromLocalStorage(this.state.selectedSearchTags)
-                // this.props.readFromDatabase(this.state.selectedSearchTags)
+                console.log("reading from db with tags: " + this.state.selectedSearchTags)
+                // this.props.readFromLocalStorage(this.state.selectedSearchTags)
+                this.props.readFromDatabase(this.state.selectedSearchTags)
             } else {
                 console.log("bypassed!")
             }
