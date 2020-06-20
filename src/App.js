@@ -21,7 +21,7 @@ class App extends Component {
 //State
 //=========================
 state = {
-  tagsObj: {}, //array of tags in use
+  tagsObj: {}, //object of tags in use
   selectedSearchTags: [], //search terms selected
   thumbnailArray: []
 }
@@ -530,12 +530,12 @@ tagsUpdate = (imageId, tags) => {
   if (imageId) {
     //console.log(imageId, tags)
 
-    //pull item from localstorage, convert tags to array then re-set tags in local storage
-    let localStorageObj = JSON.parse(localStorage.getItem(imageId))
-    let tagsArray = tags.split(" ")
-    //console.log(tagsArray)
-    localStorageObj.tags = tagsArray
-    localStorage.setItem(imageId, JSON.stringify(localStorageObj))
+    // //pull item from localstorage, convert tags to array then re-set tags in local storage
+    // let localStorageObj = JSON.parse(localStorage.getItem(imageId))
+    // let tagsArray = tags.split(" ")
+    // //console.log(tagsArray)
+    // localStorageObj.tags = tagsArray
+    // localStorage.setItem(imageId, JSON.stringify(localStorageObj))
 
     //adding tags to image in database
     console.log("adding to db: ", imageId, tags)
@@ -557,6 +557,7 @@ updateTagsInDatabase = (imageId, tags) =>{
           // 'image_id': imageId,
           'tag_string': tag.toLowerCase()
         }
+        console.log("postParams are ", postParams)
 
         //delete all album_tags for this image id
         fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" +imageId + "/destroy_album_tags",{
@@ -577,7 +578,7 @@ updateTagsInDatabase = (imageId, tags) =>{
                     'Content-Type': 'application/json'
                   }
                 })
-                .then(res => (res.json()))
+                .then(res => res.json())
                 .then(data => {
                     console.log("backend tag return is : ", data)
                       
@@ -597,21 +598,14 @@ updateTagsInDatabase = (imageId, tags) =>{
                       })
                 })
                 .then(updateTagsSearch =>{
-                      //force TagSearch.js to reload:
-                      return (
-                        <TagSearch
-                        key = {Date.now()}
-                        tagsObj = {this.state.tagsObj}
-                        getTagsFromLocalStorage = {this.getTagsFromLocalStorage}
-                        getTagsFromDatabase = {this.getTagsFromDatabase}
-                        readFromLocalStorage = {this.readFromLocalStorage}
-                        readFromDatabase = {this.readFromDatabase}
-                        clearThumbnails = {this.clearThumbnails}
-                        clearImagesFromState = {this.clearImagesFromState}
-                        />
-                        )
+                  //force TagSearch.js to reload:
+                  this.getTagsFromDatabase()
+                  .then(data => console.log("new tagsearch tags are ", data))
                 })
-                .catch(error => console.log(error))
+                .catch(error => {
+                  console.log(error)
+                  this.getTagsFromDatabase()
+                })
             })
 
           })
@@ -624,6 +618,10 @@ updateTagsInDatabase = (imageId, tags) =>{
     //this.updateTagsInDatabase('id:Jo_ZZoosmRAAAAAAAAAAFw', ['fun','run'])
     //this.getDropboxUserName()
     $('.tags-main').change(this.handleChange)
+
+    //get search tags into state:
+    this.getTagsFromDatabase()
+    
     // this.putInDatabase(sessionAccessToken, '', '', 'id:test12', '2002-10-18T18:56:22Z', '')
 
   } 

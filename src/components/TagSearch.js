@@ -91,7 +91,7 @@ class TagSearch extends Component{
     }
 
     renderTagsUsed = (tags) =>{
-        console.log("tags are : ", typeof tags)
+        console.log("tags are : ", tags)
 
         Object.keys(tags).forEach((key) => {
             //console.log(key)
@@ -117,12 +117,12 @@ class TagSearch extends Component{
         // get tags from back-end
         this.props.getTagsFromDatabase()
         .then(result => {
-            this.renderTagsUsed(result)
+            // this.renderTagsUsed(result)
         })
         //$('#smoke').css("background", "blue")
     }
     render () {
-        
+
         return(
             <>  
                 <div className='tag-search-header'>
@@ -131,6 +131,10 @@ class TagSearch extends Component{
                 </div>
                 <div className='tag-search'>
                     <div className="tags-used"></div>
+                        <input className="custom-tag-input" placeholder="custom tag search"></input>
+                        {Object.keys(this.props.tagsObj).map((key,index) => 
+                           <h5 key={key,index} id={key} onClick={() => this.tagOnClick(key)}>{key + " (" + this.props.tagsObj[key] + ")"}</h5> 
+                        )}
                 </div>
             </>
         )
