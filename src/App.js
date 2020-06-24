@@ -41,7 +41,7 @@ getTokenFromCookies = () =>{
     })
 
   console.log("sessionAccessToken is: " + sessionAccessToken)
-  return true
+  return sessionAccessToken
 }
 
 getAccountIdFromCookies = () =>{
@@ -496,7 +496,7 @@ thumbnailOnClick = (dbx_image_id) =>{
 }
 
 loadFullImage = async(imageObject) =>{
-  //console.log("loadFullImage imageObject is: " + imageObject)
+  console.log("loadFullImage imageObject is: " + imageObject)
 
   let imageMain = await this.getDropboxHighQualityThumb(imageObject.image_path, imageObject.image_name, imageObject)
   //console.log("image main ", imageMain.id)

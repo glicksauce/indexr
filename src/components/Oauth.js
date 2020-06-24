@@ -148,13 +148,13 @@ class Oauth extends Component{
         }
 
         //loads access token as global variable
-        let isAccessToken = this.props.getTokenFromCookies()
+        let accessToken = this.props.getTokenFromCookies()
 
         //loads dropbox user id as global variable
         let userAccountId = this.props.getAccountIdFromCookies()        
 
         if (userAccountId) {
-          this.checkIfUserExists(urlAccountId)
+          this.checkIfUserExists(userAccountId)
           .then(res => {
               console.log("user is: ", res)
 
@@ -165,7 +165,7 @@ class Oauth extends Component{
             })
 
           //set username, hide Dropbox connect, show main section
-          this.props.getDropboxUserName(urlAccessToken)
+          this.props.getDropboxUserName(accessToken)
           .then(res =>{
               if (res) {
                 let welcomeString = "Welcome " + res.name.familiar_name
