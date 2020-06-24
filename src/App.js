@@ -1,3 +1,6 @@
+//to do
+//app - getting full size image from thumbnail click
+
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
@@ -51,7 +54,7 @@ getAccountIdFromCookies = () =>{
   })
 
    console.log("sessionAccountId is: " + sessionAccountId)
-  return true
+  return sessionAccountId
 }
 
 //=========================
@@ -114,7 +117,9 @@ getDropboxThumbnails = (path, imageName) => {
   });
 }
 
-getDropboxHighQualityThumb = async(path, imageName) => {
+getDropboxHighQualityThumb = async(path, imageName, test) => {
+  console.log("path and imagename " + path + " " + imageName + " ")
+  console.log(test)
   var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
   let answer = await dbx.filesGetThumbnail({ path: path, format: "jpeg", size: "w2048h1536", mode: "fitone_bestfit"})
   .then(response => {
@@ -470,21 +475,30 @@ showContainer = () =>{
 //=========================
 
 //
-thumbnailOnClick = (id) =>{
-  //console.log(id + " clicked")
+thumbnailOnClick = (dbx_image_id) =>{
+  let BaseURL = process.env.REACT_APP_BACKEND
 
-  //pull image from localstorage
-  let clickedImage = JSON.parse(localStorage.getItem(id))
-  //console.log(clickedImage)
+  //fetch image details by dbx_image_id from db
+  fetch(BaseURL + 'users/' + sessionAccountId + "/albums/" + dbx_image_id ,{
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(dbReturnedImage => {
+    //pass image to load in main section
+    //need to convert to res.json() or it passes promise instead? Also only pass the first result because json encapsulation sticks an array inside an object?
+    this.loadFullImage(dbReturnedImage[0])
+  })
 
-  //pass image to load in main section
-  this.loadFullImage(clickedImage)
 }
 
-loadFullImage = async(localStorageObj) =>{
-  console.log(localStorageObj)
+loadFullImage = async(imageObject) =>{
+  //console.log("loadFullImage imageObject is: " + imageObject)
 
-  let imageMain = await this.getDropboxHighQualityThumb(localStorageObj.imagePath, localStorageObj.imageName)
+  let imageMain = await this.getDropboxHighQualityThumb(imageObject.image_path, imageObject.image_name, imageObject)
   //console.log("image main ", imageMain.id)
 
   let imageBlob = this.blobToFile(imageMain.fileBlob, imageMain.name)
@@ -501,13 +515,13 @@ loadFullImage = async(localStorageObj) =>{
   })
   
   //get tags from obj and pass to input field
-  $('.tags-main').val(Object.values(localStorageObj.tags).join(' '))
+  $('.tags-main').val(Object.values(imageObject.tags).join(' '))
 
   //get image path from obj and pass to field
-  $('.image-path').val(localStorageObj.imagePath)
+  $('.image-path').val(imageObject.imagePath)
 
   //get image date from obj and pass to field
-  $('.image-date').val(localStorageObj.client_modified_date)
+  $('.image-date').val(imageObject.client_modified_date)
 
   //add handle change so tag gets updated when changed
   //myImage.change(this.handleChange)

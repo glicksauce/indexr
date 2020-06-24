@@ -87,7 +87,7 @@ class Oauth extends Component{
         .then(res => (res.json()))
         .then(data => {
           console.log(data)
-          if (data.dbx_id == dbx_id) {
+          if (data.dbx_user_id == dbx_id) {
             return data
           } else {
             return false
@@ -138,9 +138,10 @@ class Oauth extends Component{
         let urlAccountId = this.parseQueryString(window.location.hash).account_id
         let authError = this.parseQueryString(window.location.hash).error
         // console.log("URL params are: ",this.parseQueryString(window.location.hash)) 
-         console.log("Account ID is : ", urlAccountId)
+         console.log("parsed from URL Account ID is : ", urlAccountId)
         // console.log("access error is: " + authError)
 
+        //if url account id isn't returned do this:
         if (urlAccountId != undefined){
           this.setAccountIdAsCookie(urlAccountId)
           this.setAccessTokenAsCookie(urlAccessToken)
