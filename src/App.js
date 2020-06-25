@@ -487,10 +487,12 @@ thumbnailOnClick = (dbx_image_id) =>{
     }
   })
   .then(res => res.json())
-  .then(dbReturnedImage => {
+  .then(data => {
+    console.log("res is ")
+    console.log(data)
     //pass image to load in main section
     //need to convert to res.json() or it passes promise instead? Also only pass the first result because json encapsulation sticks an array inside an object?
-    this.loadFullImage(dbReturnedImage[0])
+    this.loadFullImage(data[0])
   })
 
 }
@@ -515,10 +517,15 @@ loadFullImage = async(imageObject) =>{
   })
   
   //get tags from obj and pass to input field
-  $('.tags-main').val(Object.values(imageObject.tags).join(' '))
+  let tagStringArray = []
+  imageObject.tags.forEach(tag => {
+    tagStringArray.push(tag.tag_string)
+  })
+  // $('.tags-main').val(Object.values(imageObject.tags).join(' '))
+  $('.tags-main').val(tagStringArray.join(' '))
 
   //get image path from obj and pass to field
-  $('.image-path').val(imageObject.imagePath)
+  $('.image-path').val(imageObject.image_path)
 
   //get image date from obj and pass to field
   $('.image-date').val(imageObject.client_modified_date)
