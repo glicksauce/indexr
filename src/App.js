@@ -316,7 +316,7 @@ readFromDatabase = (tags, maxResultsQty, isRandom) =>{
   let BaseURL = process.env.REACT_APP_BACKEND
   let dropboxUserId
   let resultsCount = 0
-
+  console.log("react backend is " + process.env.REACT_APP_BACKEND)
 
   //if isRandom is on get a random key from localStorage otherwise just pull in order
   // if (isRandom) {
