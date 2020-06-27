@@ -219,6 +219,12 @@ Right container section ----------------------------------------------- */
   width: 100%;
 }
 
+.thumb-browser-header h6{
+  margin: 0 0 5px 0;
+  width: 100%;
+}
+
+
 .click-button-div{
   margin: 0 0 10px 0;
   

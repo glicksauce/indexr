@@ -1,3 +1,29 @@
+// //get list of contents including subfolders
+// getDropboxFolderContents = () => {
+//   var dbx = new Dropbox({ accessToken: sessionAccessToken, fetch: fetch });
+// dbx.filesListFolder({ path: "/camera uploads"})
+// .then(function(response) {
+//   console.log(response);
+// })
+// .catch(function(error) {
+//   console.log(error);
+// });
+// }
+
+// //render thumbnail image
+// showThumbnailImage = (blobURL, id) =>{
+//   let myImage = $('<img>')
+//   myImage
+//   .attr('src', blobURL)
+//   .attr('class', 'thumb-image')
+//   .attr('id', id)
+//   $('.thumb-browser').append(myImage)
+
+//   //add event for when clicked
+//   myImage.click(() => this.thumbnailOnClick(id))
+// }
+
+
 // updateTagsInDatabase = (imageId, tags) =>{
 
 //   let BaseURL = process.env.REACT_APP_BACKEND

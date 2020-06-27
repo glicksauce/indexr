@@ -18,6 +18,8 @@ class ThumbnailBrowser extends Component{
             //  this.props.readFromLocalStorage("",25,true)
              this.props.readFromDatabase("",5,true)
          })
+         //load tag tag search params
+         //this.props.showTagSearchParams()
     }
 
     render () {
@@ -26,6 +28,7 @@ class ThumbnailBrowser extends Component{
             <>
                 <div className='thumb-browser-header'>
                     <h3 className="thumbnail-heading">Browse Thumbnails</h3>
+                    <h6 className='tagSearchParams'>{this.props.tagSearchParams}</h6>
                     <div className="click-button-div">
                         <button id="re-sync" title="re-sync Dropbox library"></button>
                         <button id="random" title="show 25 random images"></button>
