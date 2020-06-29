@@ -65,7 +65,7 @@ class TagSearch extends Component{
 
     customTagOnChange = (event) =>{
         event.target.id = event.target.value
-
+        console.log("event is ", event.target.value)
         this.setState({
             selectedSearchTags: []
         })
@@ -111,9 +111,8 @@ class TagSearch extends Component{
     }
 
     componentDidMount() {
-        // get tags from from localstorage
-        // let tagsObj = this.props.getTagsFromLocalStorage()
 
+        $('.custom-tag-input').change(this.customTagOnChange)
         // get tags from back-end
         // this.props.getTagsFromDatabase()
         // .then(result => {
