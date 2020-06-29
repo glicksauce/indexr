@@ -10,7 +10,8 @@ var Dropbox = require('dropbox').Dropbox;
 class TagSearch extends Component{
 
     state = {
-        selectedSearchTags: []
+        selectedSearchTags: [],
+        customSearchTags: []
     }
 
     //add tag to state/props when clicked
@@ -44,17 +45,14 @@ class TagSearch extends Component{
             }
         }
 
-        //this.props.clearThumbnails()
-        this.props.clearImagesFromState()
-
         //set State, THEN call function to search and render tags
         this.setState({
             selectedSearchTags: newSearchTags
         }, () =>{
             if (!bypassImageRender) {
-                console.log("reading from db with tags: " + this.state.selectedSearchTags)
-                // this.props.readFromLocalStorage(this.state.selectedSearchTags)
-                this.props.readFromDatabase(this.state.selectedSearchTags)
+                // console.log("reading from db with tags: " + this.state.selectedSearchTags)
+                // this.props.readFromDatabase(this.state.selectedSearchTags)
+                this.renderImagesFromTags()
             } else {
                 console.log("bypassed!")
             }
@@ -66,9 +64,7 @@ class TagSearch extends Component{
     customTagOnChange = (event) =>{
         event.target.id = event.target.value
         console.log("event is ", event.target.value)
-        this.setState({
-            selectedSearchTags: []
-        })
+
 
         //if custom box is cleared out return everything
         if (event.target.id == ''){
@@ -77,38 +73,61 @@ class TagSearch extends Component{
 
         let newValue = event.target.id.split(" ")
 
-
-        newValue.forEach((value,index) => {
-            if (value != ""){
-                if (index == newValue.length -1){ //bypass render images unless on last loop through
-                    this.tagOnClick(value, true)
-                } else{
-                    this.tagOnClick(value, true, true)
-                }
-            }   
-
+        //sets cusutomSearchTags to whatever is in custom tag search field
+        this.setState({
+            customSearchTags: newValue
         })
+
+        this.renderImagesFromTags()
+
+        // newValue.forEach((value,index) => {
+        //     if (value != ""){
+        //         if (index == newValue.length -1){ //bypass render images unless on last loop through
+        //             this.tagOnClick(value, true)
+        //         } else{
+        //             this.tagOnClick(value, true, true)
+        //         }
+        //     }   
+
+        // })
     }
 
-    renderTagsUsed = (tags) =>{
-        console.log("tags are : ", tags)
+        //renders images in 'browse thumbnails' section from tags set in state
+        renderImagesFromTags = () => {
+            //clear existing images before rendering new ones
+            this.props.clearImagesFromState()
 
-        Object.keys(tags).forEach((key) => {
-            //console.log(key)
-            let $tag = $('<h5>')
-                .text(key + " (" + tags[key] + ")")
-                .attr("id", key)
-            $tag.click(() => this.tagOnClick(key))
-            $('.tags-used').append($tag)
-        })
+            let tagsToRender = ''
 
-        let $customTag = $('<input>')
-        $customTag.change(this.customTagOnChange)
-        .attr("class","custom-tag-input")
-        .attr("placeholder","custom tag search")
-        $('.tags-used').prepend($customTag)
+            if (this.state.isCustomTagSearch != ''){
+                tagsToRender = this.state.selectedSearchTags.concat(this.state.customSearchTags)
+                console.log("tags to render: " + tagsToRender)
+            } else {
+                tagsToRender = this.state.selectedSearchTags
+            }
+
+            this.props.readFromDatabase(tagsToRender)
+        }
+
+    // renderTagsUsed = (tags) =>{
+    //     console.log("tags are : ", tags)
+
+    //     Object.keys(tags).forEach((key) => {
+    //         //console.log(key)
+    //         let $tag = $('<h5>')
+    //             .text(key + " (" + tags[key] + ")")
+    //             .attr("id", key)
+    //         $tag.click(() => this.tagOnClick(key))
+    //         $('.tags-used').append($tag)
+    //     })
+
+    //     let $customTag = $('<input>')
+    //     $customTag.change(this.customTagOnChange)
+    //     .attr("class","custom-tag-input")
+    //     .attr("placeholder","custom tag search")
+    //     $('.tags-used').prepend($customTag)
         
-    }
+    // }
 
     componentDidMount() {
 
