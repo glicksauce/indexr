@@ -1,3 +1,5 @@
+//to do - readfromdirectory. kind of works. it will load all subdirectories as well, might need to limit
+
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
@@ -24,7 +26,8 @@ state = {
   tagsObj: {}, //object of tags in use
   selectedSearchTags: [], //search terms selected
   thumbnailArray: [],
-  tagSearchParams: '' //string of current search params
+  tagSearchParams: '', //string of current search params
+  selectedImagePath: '' //file location of main image
 }
 
 clearImagesFromState = () =>{
@@ -291,6 +294,51 @@ readFromDatabase = (tags, maxResultsQty, isRandom) =>{
         
 }
 
+//loads given number of images from database that match directory passed
+readDirectoryFromDatabase = (directory, maxResultsQty) =>{
+  let BaseURL = process.env.REACT_APP_BACKEND
+  let dropboxUserId
+  let resultsCount = 0
+  console.log("react backend is " + process.env.REACT_APP_BACKEND)
+
+  //chop the image file off the end of the directory:
+  //Credit to https://stackoverflow.com/questions/8374742/regex-last-occurrence
+  let regExDirSearch = /\/(?:.(?!\/))+$/
+  let choppedFilePath = directory.match(regExDirSearch)
+  let parsedDirectory = directory.substring(0,choppedFilePath.index +1) //only displays string up to file path
+  console.log("spliced dir is ", parsedDirectory)
+
+    //default of results to return
+    if (maxResultsQty == undefined){
+      maxResultsQty = 20
+    }
+
+    //encode directory as URI component so it can pass as param
+    let URLParsedDirectory = encodeURIComponent(parsedDirectory)
+
+      //call function to display search params
+      this.showTagSearchParams("showing " + maxResultsQty + " images from: " + directory)
+
+      fetch(BaseURL + 'users/' + sessionAccountId + "/albums/directory_search/" + URLParsedDirectory,{
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("directory results: ")
+        console.log(data)
+
+      //iterate through maxresultsQty param
+      for (resultsCount; resultsCount<maxResultsQty&&resultsCount<data.length; resultsCount++){        
+          this.getDropboxThumbnails(data[resultsCount].image_path, data[resultsCount].image_name)
+      }     
+      })
+    
+}
+
 getTagsFromDatabase = async() => {
   let BaseURL = process.env.REACT_APP_BACKEND
   let dropboxUserId
@@ -370,7 +418,12 @@ loadFullImage = async(imageObject) =>{
   $('.tags-main').val(tagStringArray.join(' '))
 
   //get image path from obj and pass to field
-  $('.image-path').val(imageObject.image_path)
+  $('.image-path').text(imageObject.image_path)
+
+  //pass image path of image into state
+  this.setState({
+    selectedImagePath: imageObject.image_path
+  })
 
   //get image date from obj and pass to field
   $('.image-date').val(imageObject.client_modified_date)
@@ -411,6 +464,12 @@ thumbnailOnClick = (dbx_image_id) =>{
     this.loadFullImage(data[0])
   })
 
+}
+
+//when the folder icon in main section is clicked
+folderIconOnClick = () => {
+  this.clearImagesFromState()
+  this.readDirectoryFromDatabase(this.state.selectedImagePath)
 }
 
 //=========================
@@ -544,7 +603,8 @@ updateTagsInDatabase = (imageId, tags) =>{
                   </div>
                   <div className="line line-2">
                     <h3 className="label">image path:</h3>
-                    <input className="no-edit image-path" readOnly="readonly"></input>
+                    <div className="no-edit image-path"></div>
+                      <button onClick={this.folderIconOnClick} title='load this directory' className='folder-icon'></button>
                   </div>
                   <div className="line line-3">
                     <h3 className="label">date:</h3>
