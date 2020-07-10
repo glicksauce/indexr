@@ -315,9 +315,10 @@ readDirectoryFromDatabase = (directory, maxResultsQty) =>{
 
     //encode directory as URI component so it can pass as param
     let URLParsedDirectory = encodeURIComponent(parsedDirectory)
+    console.log("encodedURI directory is: " + URLParsedDirectory)
 
       //call function to display search params
-      this.showTagSearchParams("showing " + maxResultsQty + " images from: " + directory)
+      this.showTagSearchParams("showing " + maxResultsQty + " images from: " + parsedDirectory)
 
       fetch(BaseURL + 'users/' + sessionAccountId + "/albums/directory_search/" + URLParsedDirectory,{
         method: 'GET',
@@ -604,7 +605,7 @@ updateTagsInDatabase = (imageId, tags) =>{
                   <div className="line line-2">
                     <h3 className="label">image path:</h3>
                     <div className="no-edit image-path"></div>
-                      <button onClick={this.folderIconOnClick} title='load this directory' className='folder-icon'></button>
+                      <button onClick={this.folderIconOnClick} title='load images in this directory' className='folder-icon'></button>
                   </div>
                   <div className="line line-3">
                     <h3 className="label">date:</h3>
